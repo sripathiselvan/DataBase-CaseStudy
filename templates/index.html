@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Password Breach Monitoring Database — an educational cybersecurity case-study dashboard backed by Flask & SQLite.">
+  <title>Password Breach Monitoring Database</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">PBM</div>
+      <div><strong>PBM DATABASE</strong><small>Research Console</small></div>
+    </div>
+    <nav class="nav" aria-label="Primary navigation">
+      <button class="nav-btn active" data-view="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+      <button class="nav-btn" data-view="database"><span class="nav-icon">▤</span>Breach Database</button>
+      <button class="nav-btn" data-view="case-study"><span class="nav-icon">◫</span>Case Studies</button>
+      <button class="nav-btn" data-view="sql"><span class="nav-icon">⌘</span>SQL Explorer</button>
+      <button class="nav-btn" data-view="analytics"><span class="nav-icon">⌁</span>Analytics</button>
+      <button class="nav-btn" data-view="about"><span class="nav-icon">ⓘ</span>About</button>
+    </nav>
+    <div class="sidebar-foot">
+      <strong>● SYSTEM OPERATIONAL</strong>Flask REST API · SQLite DB Active
+    </div>
+  </aside>
+
+  <section class="shell">
+    <header class="topbar">
+      <button class="icon-btn mobile-menu" id="menuBtn" aria-label="Open menu">☰</button>
+      <div class="page-heading">
+        <h1 id="pageTitle">Security Overview</h1>
+        <p id="pageSubtitle">Password breach intelligence workspace</p>
+      </div>
+      <label class="global-search">
+        <span>⌕</span>
+        <input id="globalSearch" placeholder="Search organizations, vectors, IDs…" aria-label="Global search">
+      </label>
+      <div class="status"><span class="status-dot"></span>SQLite Connected</div>
+    </header>
+
+    <main>
+      <!-- DASHBOARD VIEW -->
+      <section class="view active" id="dashboard">
+        <div class="section-head">
+          <div><span class="eyebrow">Operational summary</span><h2>Breach Intelligence Dashboard</h2></div>
+          <span class="subtle mono" id="lastSyncTime">SYNCED WITH SQLITE</span>
+        </div>
+        <div class="stats">
+          <article class="stat">
+            <div class="stat-top"><span>Total Breaches</span><span class="stat-icon">▤</span></div>
+            <div class="stat-value" id="dashTotalBreaches">...</div>
+            <div class="delta up" id="dashTotalDelta">Live SQLite data</div>
+          </article>
+          <article class="stat">
+            <div class="stat-top"><span>Records Exposed</span><span class="stat-icon">◎</span></div>
+            <div class="stat-value" id="dashTotalRecords">...</div>
+            <div class="delta">Across incident records</div>
+          </article>
+          <article class="stat">
+            <div class="stat-top"><span>Critical Breaches</span><span class="stat-icon">△</span></div>
+            <div class="stat-value" id="dashCriticalCount">...</div>
+            <div class="delta critical" id="dashCriticalPct">...</div>
+          </article>
+          <article class="stat">
+            <div class="stat-top"><span>Latest Incident</span><span class="stat-icon">◷</span></div>
+            <div class="stat-value" id="dashLatestDate">...</div>
+            <div class="delta" id="dashLatestOrg">...</div>
+          </article>
+        </div>
+
+        <div class="dash-grid">
+          <article class="panel">
+            <div class="panel-head"><h3>Breaches by Year</h3><span id="dashYearRange">2020—2026</span></div>
+            <div class="chart-wrap">
+              <svg id="dashYearChartSvg" viewBox="0 0 650 160" role="img" aria-label="Breaches by year line chart">
+                <defs>
+                  <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#24d5c4" stop-opacity=".28"/>
+                    <stop offset="1" stop-color="#24d5c4" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <g id="dashChartContent">
+                  <!-- Rendered dynamically -->
+                </g>
+              </svg>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><h3>Severity Distribution</h3><span>ALL TIME</span></div>
+            <div class="donut-box">
+              <div class="donut" id="dashDonut" data-center="120&#10;incidents"></div>
+              <div class="legend" id="dashDonutLegend">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel table-panel">
+          <div class="panel-head">
+            <h3>Recent Breach Activity</h3>
+            <button class="btn" data-jump="database">View database →</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Organization</th><th>Date</th><th>Records</th><th>Severity</th><th>Attack Vector</th><th>Status</th></tr>
+              </thead>
+              <tbody id="recentRows"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- BREACH DATABASE VIEW -->
+      <section class="view" id="database">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Simulated intelligence</span>
+            <h2>Breach Database</h2>
+            <p>Search and inspect incident records stored in SQLite.</p>
+          </div>
+          <span class="subtle mono" id="recordCount">0 RECORDS</span>
+        </div>
+        <div class="toolbar">
+          <input class="field" id="dbSearch" placeholder="Search ID, organization, vector…">
+          <select class="field" id="severityFilter">
+            <option value="">All severities</option>
+            <option value="Critical">Critical</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+          <select class="field" id="yearFilter">
+            <option value="">All years</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+            <option value="2020">2020</option>
+          </select>
+          <select class="field" id="industryFilter">
+            <option value="">All industries</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Finance">Finance</option>
+            <option value="Technology">Technology</option>
+            <option value="Transport">Transport</option>
+            <option value="Retail">Retail</option>
+            <option value="Education">Education</option>
+            <option value="Energy">Energy</option>
+            <option value="Telecommunications">Telecommunications</option>
+            <option value="Government">Government</option>
+            <option value="Media">Media</option>
+          </select>
+        </div>
+        <article class="panel table-panel">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="cursor:pointer" id="th-id">ID ↕</th>
+                  <th style="cursor:pointer" id="th-org">Organization ↕</th>
+                  <th style="cursor:pointer" id="th-date">Date ↕</th>
+                  <th style="cursor:pointer" id="th-records">Records ↕</th>
+                  <th>Severity</th>
+                  <th>Attack Vector</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="databaseRows"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <span id="pageInfo">Showing 0 records</span>
+            <div class="pager" id="paginationControls">
+              <button class="icon-btn" id="prevPageBtn" aria-label="Previous page">‹</button>
+              <span id="pageNumbers"></span>
+              <button class="icon-btn" id="nextPageBtn" aria-label="Next page">›</button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- CASE STUDY VIEW -->
+      <section class="view" id="case-study">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow" id="caseEyebrow">Case PBM-0261</span>
+            <h2 id="caseTitle">Aster Peak Health Incident</h2>
+            <p id="caseSubtitle">Sanitized educational analysis · 14 February 2026</p>
+          </div>
+          <span class="badge critical" id="caseSeverityBadge">CRITICAL</span>
+        </div>
+        <div class="case-layout">
+          <div class="case-main">
+            <article class="panel case-block">
+              <h3>Executive Summary</h3>
+              <p id="caseExecSummary">Loading case study...</p>
+            </article>
+            <article class="panel case-block">
+              <h3>Incident Timeline</h3>
+              <div class="timeline" id="caseTimeline"></div>
+            </article>
+            <article class="panel case-block">
+              <h3>Response</h3>
+              <p id="caseResponse">Loading response...</p>
+            </article>
+          </div>
+          <div class="case-side">
+            <article class="panel case-block">
+              <h3>Attack Vector</h3>
+              <div class="tag-list" id="caseVectorTags"></div>
+            </article>
+            <article class="panel case-block">
+              <h3>Root Cause</h3>
+              <p id="caseRootCause">Loading root cause...</p>
+            </article>
+            <article class="panel case-block">
+              <h3>Data Exposed</h3>
+              <div class="tag-list" id="caseDataTags"></div>
+            </article>
+            <article class="panel case-block">
+              <h3>Impact</h3>
+              <div class="impact" id="caseImpactMetrics"></div>
+            </article>
+            <article class="panel case-block">
+              <h3>Lessons Learned</h3>
+              <p id="caseLessons">Loading lessons learned...</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- SQL EXPLORER VIEW -->
+      <section class="view" id="sql">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Safe SQLite engine</span>
+            <h2>SQL Explorer</h2>
+            <p>Execute live read-only SELECT queries against SQLite `breaches` & `case_studies` tables.</p>
+          </div>
+          <span class="run-state">● SAFE READ-ONLY MODE</span>
+        </div>
+        <div class="sql-layout">
+          <div>
+            <article class="panel editor-panel">
+              <div class="panel-head">
+                <h3>Query Editor</h3>
+                <div class="editor-tools">
+                  <button class="btn" id="clearSql">Clear</button>
+                  <button class="btn btn-primary" id="runSql">▶ Run Query</button>
+                </div>
+              </div>
+              <div class="editor-wrap">
+                <div class="lines">1<br>2<br>3<br>4<br>5</div>
+                <textarea class="editor" id="sqlEditor" spellcheck="false">SELECT organization, affected_records, severity, attack_vector
+FROM breaches
+WHERE severity = 'Critical'
+ORDER BY affected_records DESC
+LIMIT 10;</textarea>
+              </div>
+            </article>
+            <article class="panel table-panel query-results">
+              <div class="panel-head">
+                <h3>Query Results</h3>
+                <span id="queryMeta">Ready</span>
+              </div>
+              <div id="sqlErrorBox" style="display:none" class="error-banner"></div>
+              <div class="table-scroll">
+                <table id="sqlResultsTable">
+                  <thead id="queryHeaders"></thead>
+                  <tbody id="queryRows"></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+          <aside class="sql-side">
+            <article class="panel">
+              <div class="panel-head"><h3>Example Queries</h3></div>
+              <div class="list" id="sqlExamplesList">
+                <button class="list-item example" data-sql="SELECT * FROM breaches&#10;ORDER BY breach_date DESC&#10;LIMIT 10;">Recent incidents</button>
+                <button class="list-item example" data-sql="SELECT industry, COUNT(*) AS total_breaches&#10;FROM breaches&#10;GROUP BY industry&#10;ORDER BY total_breaches DESC;">Count by industry</button>
+                <button class="list-item example" data-sql="SELECT attack_vector, SUM(affected_records) AS total_records&#10;FROM breaches&#10;GROUP BY attack_vector&#10;ORDER BY total_records DESC;">Records by vector</button>
+                <button class="list-item example" data-sql="SELECT organization, affected_records, severity&#10;FROM breaches&#10;WHERE severity = 'Critical'&#10;ORDER BY affected_records DESC;">Critical incidents</button>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><h3>Query History</h3></div>
+              <div class="list" id="history"></div>
+            </article>
+          </aside>
+        </div>
+      </section>
+
+      <!-- THREAT ANALYTICS VIEW -->
+      <section class="view" id="analytics">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Threat Intelligence</span>
+            <h2>Threat Analytics</h2>
+            <p>Aggregated metrics calculated live from the SQLite database.</p>
+          </div>
+          <span class="subtle mono">RANGE 2020—2026</span>
+        </div>
+        <div class="analytics-grid">
+          <article class="panel wide">
+            <div class="panel-head"><h3>Breaches by Year</h3><span>INCIDENT COUNT</span></div>
+            <div class="mini-chart"><div class="bars" id="analyticsYearBars"></div></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><h3>Severity Share</h3><span>ALL TIME</span></div>
+            <div class="donut-box">
+              <div class="donut" id="analyticsDonut" data-center="120&#10;total"></div>
+              <div class="legend" id="analyticsDonutLegend"></div>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><h3>Records Exposed</h3><span>BY YEAR</span></div>
+            <div class="mini-chart"><div class="bars" id="analyticsRecordsBars"></div></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><h3>Top Industries</h3><span>INCIDENTS</span></div>
+            <div class="mini-chart"><div class="hbars" id="analyticsIndustryBars"></div></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><h3>Top Attack Vectors</h3><span>FREQUENCY</span></div>
+            <div class="mini-chart"><div class="hbars" id="analyticsVectorBars"></div></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ABOUT VIEW -->
+      <section class="view" id="about">
+        <div class="about">
+          <span class="eyebrow">About this project</span>
+          <article class="panel about-hero">
+            <div class="about-logo">PBM</div>
+            <div>
+              <h2>Password Breach Monitoring Database</h2>
+              <p>An educational cybersecurity case-study platform powered by a Python + Flask backend and SQLite database. Demonstrates breach intelligence modeling, safe read-only SQL execution, and interactive analytical dashboards.</p>
+            </div>
+          </article>
+          <div class="notice">
+            <strong>Educational dataset.</strong> Built with simulated research data for testing cybersecurity research console design patterns, SQLite indexing, and read-only query sandboxing.
+          </div>
+        </div>
+      </section>
+    </main>
+  </section>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <span class="eyebrow" id="modalId">PBM-0000</span>
+        <h2 id="modalTitle">Incident Detail</h2>
+      </div>
+      <button class="icon-btn" id="closeModal" aria-label="Close detail">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid" id="modalDetails"></div>
+      <p class="modal-copy" id="modalCopy"></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" id="closeModalFoot">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
