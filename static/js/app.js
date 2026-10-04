@@ -7,7 +7,7 @@ const titles = {
   dashboard: ['Security Overview', 'Password breach intelligence workspace'],
   database: ['Breach Database', 'Search and inspect SQLite breach records'],
   'case-study': ['Case Study', 'Structured incident analysis'],
-  sql: ['SQL Explorer', 'Execute safe read-only SELECT queries on SQLite'],
+  sql: ['SQL Explorer', 'Interactive toggleable query builder with live preview'],
   analytics: ['Threat Analytics', 'Aggregated breach intelligence'],
   about: ['About PBM', 'Educational cybersecurity case-study platform']
 };
@@ -15,6 +15,18 @@ const titles = {
 let currentPage = 1;
 const perPage = 10;
 let currentSort = { by: 'breach_date', order: 'desc' };
+
+// Toggleable SQL Builder State
+let sqlState = {
+  columns: ['id', 'organization', 'breach_date', 'affected_records', 'severity'],
+  severity: '',
+  industry: '',
+  vector: '',
+  sort: 'affected_records',
+  order: 'DESC',
+  limit: '10',
+  customQuery: null
+};
 
 // Utility Functions
 const fmt = n => new Intl.NumberFormat('en-US').format(n);
@@ -66,7 +78,10 @@ function navigate(id) {
   else if (id === 'database') loadDatabase();
   else if (id === 'case-study') loadCaseStudy();
   else if (id === 'analytics') loadAnalytics();
-  else if (id === 'sql') loadSqlExamples();
+  else if (id === 'sql') {
+    loadSqlExamples();
+    updateSqlPreviewAndRun();
+  }
 }
 
 // Modal Detail View
@@ -141,7 +156,6 @@ function renderDashboardLineChart(byYearData) {
   const counts = byYearData.map(d => d.count);
   const maxCount = Math.max(...counts, 10);
   
-  // SVG coordinate dimensions: viewBox="0 0 650 160"
   const xStart = 40, xEnd = 625, yTop = 20, yBottom = 140;
   const widthSpan = xEnd - xStart;
   const heightSpan = yBottom - yTop;
@@ -318,9 +332,54 @@ async function loadCaseStudy(breachId = 'PBM-0261') {
   }
 }
 
-// SQL Explorer Execution
-async function runSqlQuery() {
-  const sql = document.getElementById('sqlEditor').value;
+// TOGGLEABLE SQL BUILDER & LIVE PREVIEW ENGINE
+function generateSqlFromState() {
+  if (sqlState.customQuery) {
+    return sqlState.customQuery;
+  }
+
+  const cols = sqlState.columns.length > 0 ? sqlState.columns.join(', ') : '*';
+  let sql = `SELECT ${cols}\nFROM breaches`;
+
+  const wheres = [];
+  if (sqlState.severity) {
+    wheres.push(`severity = '${sqlState.severity}'`);
+  }
+  if (sqlState.industry) {
+    wheres.push(`industry = '${sqlState.industry}'`);
+  }
+  if (sqlState.vector) {
+    wheres.push(`attack_vector = '${sqlState.vector}'`);
+  }
+
+  if (wheres.length > 0) {
+    sql += `\nWHERE ${wheres.join('\n  AND ')}`;
+  }
+
+  if (sqlState.sort) {
+    sql += `\nORDER BY ${sqlState.sort} ${sqlState.order}`;
+  }
+
+  if (sqlState.limit) {
+    sql += `\nLIMIT ${sqlState.limit};`;
+  } else {
+    sql += `;`;
+  }
+
+  return sql;
+}
+
+function updateSqlPreviewAndRun() {
+  const generatedSql = generateSqlFromState();
+  const previewEl = document.getElementById('sqlPreviewCode');
+  if (previewEl) {
+    previewEl.textContent = generatedSql;
+  }
+  runSqlQuery(generatedSql);
+}
+
+async function runSqlQuery(sqlQueryOverride) {
+  const sql = sqlQueryOverride || generateSqlFromState();
   const metaSpan = document.getElementById('queryMeta');
   const errorBox = document.getElementById('sqlErrorBox');
   const headersTr = document.getElementById('queryHeaders');
@@ -352,8 +411,8 @@ async function runSqlQuery() {
       }
 
       // Add to Query History
-      const firstLine = sql.trim().split('\n')[0].substring(0, 32);
-      historyList.insertAdjacentHTML('afterbegin', `<div class="list-item" onclick="setSqlEditor(\`${sql.replace(/`/g, '\\`')}\`)">${firstLine}...<span class="history-time">${now} · ${data.execution_time_ms} ms</span></div>`);
+      const firstLine = sql.trim().split('\n')[0].substring(0, 36);
+      historyList.insertAdjacentHTML('afterbegin', `<div class="list-item" onclick="applyPresetSql(\`${sql.replace(/`/g, '\\`')}\`)">${firstLine}...<span class="history-time">${now} · ${data.execution_time_ms} ms</span></div>`);
 
     } else {
       metaSpan.textContent = 'Error';
@@ -371,8 +430,13 @@ async function runSqlQuery() {
   }
 }
 
-function setSqlEditor(sql) {
-  document.getElementById('sqlEditor').value = sql;
+function applyPresetSql(query) {
+  sqlState.customQuery = query;
+  const previewEl = document.getElementById('sqlPreviewCode');
+  if (previewEl) {
+    previewEl.textContent = query;
+  }
+  runSqlQuery(query);
 }
 
 async function loadSqlExamples() {
@@ -383,11 +447,134 @@ async function loadSqlExamples() {
 
     const list = document.getElementById('sqlExamplesList');
     list.innerHTML = json.data.map(ex => `
-      <button class="list-item example" onclick="setSqlEditor(\`${ex.sql.replace(/`/g, '\\`')}\`)">${ex.name}</button>
+      <button class="list-item example" onclick="applyPresetSql(\`${ex.sql.replace(/`/g, '\\`')}\`)">${ex.name}</button>
     `).join('');
   } catch (err) {
     console.error('Failed to load SQL examples:', err);
   }
+}
+
+function initSqlToggleControls() {
+  // Columns Toggles
+  document.querySelectorAll('#colToggles .toggle-pill').forEach(btn => {
+    btn.onclick = () => {
+      const col = btn.dataset.col;
+      btn.classList.toggle('active');
+      
+      const activeCols = [];
+      document.querySelectorAll('#colToggles .toggle-pill.active').forEach(b => {
+        activeCols.push(b.dataset.col);
+      });
+      sqlState.columns = activeCols;
+      sqlState.customQuery = null;
+      updateSqlPreviewAndRun();
+    };
+  });
+
+  // Severity Toggles
+  document.querySelectorAll('#severityToggles .toggle-pill').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#severityToggles .toggle-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sqlState.severity = btn.dataset.sev;
+      sqlState.customQuery = null;
+      updateSqlPreviewAndRun();
+    };
+  });
+
+  // Industry Dropdown Toggle
+  const indSelect = document.getElementById('sqlIndustrySelect');
+  if (indSelect) {
+    indSelect.onchange = () => {
+      sqlState.industry = indSelect.value;
+      sqlState.customQuery = null;
+      updateSqlPreviewAndRun();
+    };
+  }
+
+  // Vector Dropdown Toggle
+  const vecSelect = document.getElementById('sqlVectorSelect');
+  if (vecSelect) {
+    vecSelect.onchange = () => {
+      sqlState.vector = vecSelect.value;
+      sqlState.customQuery = null;
+      updateSqlPreviewAndRun();
+    };
+  }
+
+  // Sort Field Toggles
+  document.querySelectorAll('#sortToggles .toggle-pill').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#sortToggles .toggle-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sqlState.sort = btn.dataset.sort;
+      sqlState.customQuery = null;
+      updateSqlPreviewAndRun();
+    };
+  });
+
+  // Sort Order Toggles
+  document.querySelectorAll('#orderToggles .toggle-pill').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#orderToggles .toggle-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sqlState.order = btn.dataset.order;
+      sqlState.customQuery = null;
+      updateSqlPreviewAndRun();
+    };
+  });
+
+  // Limit Toggles
+  document.querySelectorAll('#limitToggles .toggle-pill').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#limitToggles .toggle-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sqlState.limit = btn.dataset.limit;
+      sqlState.customQuery = null;
+      updateSqlPreviewAndRun();
+    };
+  });
+
+  // Reset Toggles Button
+  const resetBtn = document.getElementById('resetSqlToggles');
+  if (resetBtn) {
+    resetBtn.onclick = () => {
+      sqlState = {
+        columns: ['id', 'organization', 'breach_date', 'affected_records', 'severity'],
+        severity: '',
+        industry: '',
+        vector: '',
+        sort: 'affected_records',
+        order: 'DESC',
+        limit: '10',
+        customQuery: null
+      };
+
+      // Reset DOM states
+      document.querySelectorAll('#colToggles .toggle-pill').forEach(b => {
+        b.classList.toggle('active', ['id', 'organization', 'breach_date', 'affected_records', 'severity'].includes(b.dataset.col));
+      });
+      document.querySelectorAll('#severityToggles .toggle-pill').forEach(b => {
+        b.classList.toggle('active', b.dataset.sev === '');
+      });
+      if (indSelect) indSelect.value = '';
+      if (vecSelect) vecSelect.value = '';
+      document.querySelectorAll('#sortToggles .toggle-pill').forEach(b => {
+        b.classList.toggle('active', b.dataset.sort === 'affected_records');
+      });
+      document.querySelectorAll('#orderToggles .toggle-pill').forEach(b => {
+        b.classList.toggle('active', b.dataset.order === 'DESC');
+      });
+      document.querySelectorAll('#limitToggles .toggle-pill').forEach(b => {
+        b.classList.toggle('active', b.dataset.limit === '10');
+      });
+
+      updateSqlPreviewAndRun();
+    };
+  }
+
+  // Run Query Button
+  document.getElementById('runSql').onclick = () => updateSqlPreviewAndRun();
 }
 
 // Threat Analytics Data Loading
@@ -515,12 +702,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // SQL Explorer Buttons
-  document.getElementById('runSql').onclick = runSqlQuery;
-  document.getElementById('clearSql').onclick = () => {
-    document.getElementById('sqlEditor').value = '';
-    document.getElementById('sqlErrorBox').style.display = 'none';
-  };
+  // Init Toggleable SQL Builder
+  initSqlToggleControls();
 
   // Initial Data Load
   loadDashboard();

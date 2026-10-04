@@ -236,42 +236,150 @@
         </div>
       </section>
 
-      <!-- SQL EXPLORER VIEW -->
+      <!-- SQL EXPLORER VIEW (PROMINENT SPLIT-VIEW QUERY RESULTS) -->
       <section class="view" id="sql">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Safe SQLite engine</span>
+            <span class="eyebrow">Interactive Query Builder</span>
             <h2>SQL Explorer</h2>
-            <p>Execute live read-only SELECT queries against SQLite `breaches` & `case_studies` tables.</p>
+            <p>Toggle options on the left to generate SQL queries and view real-time results on the right.</p>
           </div>
           <span class="run-state">● SAFE READ-ONLY MODE</span>
         </div>
         <div class="sql-layout">
-          <div>
-            <article class="panel editor-panel">
-              <div class="panel-head">
-                <h3>Query Editor</h3>
-                <div class="editor-tools">
-                  <button class="btn" id="clearSql">Clear</button>
-                  <button class="btn btn-primary" id="runSql">▶ Run Query</button>
+          <!-- LEFT COLUMN: BUILDER, PREVIEW & PRESETS -->
+          <div class="sql-left-col">
+            <!-- TOGGLEABLE QUERY BUILDER CONTROLS -->
+            <article class="panel case-block sql-builder-panel">
+              <div class="panel-head" style="margin:-13px -13px 10px; border-bottom:1px solid var(--line);">
+                <h3>Query Configuration Toggles</h3>
+                <button class="btn" id="resetSqlToggles">Reset</button>
+              </div>
+
+              <!-- Columns Selection Toggles -->
+              <div class="toggle-group">
+                <label class="toggle-label">Select Columns:</label>
+                <div class="toggle-pills" id="colToggles">
+                  <button class="toggle-pill active" data-col="id">ID</button>
+                  <button class="toggle-pill active" data-col="organization">Org</button>
+                  <button class="toggle-pill active" data-col="breach_date">Date</button>
+                  <button class="toggle-pill active" data-col="affected_records">Records</button>
+                  <button class="toggle-pill active" data-col="severity">Severity</button>
+                  <button class="toggle-pill" data-col="industry">Industry</button>
+                  <button class="toggle-pill" data-col="attack_vector">Vector</button>
+                  <button class="toggle-pill" data-col="status">Status</button>
                 </div>
               </div>
-              <div class="editor-wrap">
-                <div class="lines">1<br>2<br>3<br>4<br>5</div>
-                <textarea class="editor" id="sqlEditor" spellcheck="false">SELECT organization, affected_records, severity, attack_vector
+
+              <!-- Severity Filter Toggles -->
+              <div class="toggle-group">
+                <label class="toggle-label">Severity Filter:</label>
+                <div class="toggle-pills" id="severityToggles">
+                  <button class="toggle-pill active" data-sev="">All</button>
+                  <button class="toggle-pill" data-sev="Critical">Critical</button>
+                  <button class="toggle-pill" data-sev="High">High</button>
+                  <button class="toggle-pill" data-sev="Medium">Medium</button>
+                  <button class="toggle-pill" data-sev="Low">Low</button>
+                </div>
+              </div>
+
+              <!-- Industry & Vector Filter Dropdowns -->
+              <div class="toggle-row-group">
+                <div class="toggle-item">
+                  <label class="toggle-label">Industry:</label>
+                  <select class="field" id="sqlIndustrySelect">
+                    <option value="">All Industries</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Education">Education</option>
+                    <option value="Energy">Energy</option>
+                    <option value="Telecommunications">Telecommunications</option>
+                  </select>
+                </div>
+
+                <div class="toggle-item">
+                  <label class="toggle-label">Attack Vector:</label>
+                  <select class="field" id="sqlVectorSelect">
+                    <option value="">All Vectors</option>
+                    <option value="Credential stuffing">Credential stuffing</option>
+                    <option value="Phishing">Phishing</option>
+                    <option value="Cloud misconfiguration">Cloud misconfiguration</option>
+                    <option value="Supply chain">Supply chain</option>
+                    <option value="Stolen session">Stolen session</option>
+                    <option value="Legacy endpoint">Legacy endpoint</option>
+                    <option value="Access policy error">Access policy error</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Sort & Limit Toggles -->
+              <div class="toggle-row-group">
+                <div class="toggle-item">
+                  <label class="toggle-label">Sort By:</label>
+                  <div class="toggle-pills" id="sortToggles">
+                    <button class="toggle-pill active" data-sort="affected_records">Records</button>
+                    <button class="toggle-pill" data-sort="breach_date">Date</button>
+                    <button class="toggle-pill" data-sort="organization">Org</button>
+                  </div>
+                </div>
+
+                <div class="toggle-item">
+                  <label class="toggle-label">Order & Limit:</label>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <div class="toggle-pills" id="orderToggles">
+                      <button class="toggle-pill active" data-order="DESC">↓</button>
+                      <button class="toggle-pill" data-order="ASC">↑</button>
+                    </div>
+                    <div class="toggle-pills" id="limitToggles">
+                      <button class="toggle-pill active" data-limit="10">10</button>
+                      <button class="toggle-pill" data-limit="25">25</button>
+                      <button class="toggle-pill" data-limit="50">50</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- READ-ONLY QUERY PREVIEW PANEL -->
+            <article class="panel editor-panel">
+              <div class="panel-head">
+                <h3>SQL Query Live Preview</h3>
+                <button class="btn btn-primary" id="runSql">▶ Run Query</button>
+              </div>
+              <div class="preview-wrap">
+                <pre class="sql-preview-code" id="sqlPreviewCode">SELECT id, organization, breach_date, affected_records, severity
 FROM breaches
 WHERE severity = 'Critical'
 ORDER BY affected_records DESC
-LIMIT 10;</textarea>
+LIMIT 10;</pre>
               </div>
             </article>
-            <article class="panel table-panel query-results">
+
+            <!-- PRESETS & HISTORY ACCORDION/PANELS -->
+            <div class="side-sub-grid">
+              <article class="panel">
+                <div class="panel-head"><h3>Preset Templates</h3></div>
+                <div class="list" id="sqlExamplesList"></div>
+              </article>
+              <article class="panel">
+                <div class="panel-head"><h3>Query History</h3></div>
+                <div class="list" id="history"></div>
+              </article>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: PROMINENT & IMMEDIATELY VISIBLE QUERY RESULTS -->
+          <div class="sql-right-col">
+            <article class="panel table-panel query-results-panel">
               <div class="panel-head">
-                <h3>Query Results</h3>
+                <h3>Query Results Output</h3>
                 <span id="queryMeta">Ready</span>
               </div>
               <div id="sqlErrorBox" style="display:none" class="error-banner"></div>
-              <div class="table-scroll">
+              <div class="results-table-scroll">
                 <table id="sqlResultsTable">
                   <thead id="queryHeaders"></thead>
                   <tbody id="queryRows"></tbody>
@@ -279,21 +387,6 @@ LIMIT 10;</textarea>
               </div>
             </article>
           </div>
-          <aside class="sql-side">
-            <article class="panel">
-              <div class="panel-head"><h3>Example Queries</h3></div>
-              <div class="list" id="sqlExamplesList">
-                <button class="list-item example" data-sql="SELECT * FROM breaches&#10;ORDER BY breach_date DESC&#10;LIMIT 10;">Recent incidents</button>
-                <button class="list-item example" data-sql="SELECT industry, COUNT(*) AS total_breaches&#10;FROM breaches&#10;GROUP BY industry&#10;ORDER BY total_breaches DESC;">Count by industry</button>
-                <button class="list-item example" data-sql="SELECT attack_vector, SUM(affected_records) AS total_records&#10;FROM breaches&#10;GROUP BY attack_vector&#10;ORDER BY total_records DESC;">Records by vector</button>
-                <button class="list-item example" data-sql="SELECT organization, affected_records, severity&#10;FROM breaches&#10;WHERE severity = 'Critical'&#10;ORDER BY affected_records DESC;">Critical incidents</button>
-              </div>
-            </article>
-            <article class="panel">
-              <div class="panel-head"><h3>Query History</h3></div>
-              <div class="list" id="history"></div>
-            </article>
-          </aside>
         </div>
       </section>
 
