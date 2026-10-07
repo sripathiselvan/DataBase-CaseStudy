@@ -1,19 +1,19 @@
 /**
- * Password Breach Monitoring (PBM) - Frontend Application
- * Interacts with Flask REST API and SQLite database (pbm_database.db).
- * Supports white-theme incident dashboard, consolidated executive report generator for all data,
- * real data sources explorer, and sandboxed SQL runner.
+ * Password Breach Monitoring (PBM) Intelligence Platform - Frontend Application
+ * Interacts with Flask REST API and MySQL / MariaDB / SQLite backends.
+ * Features enterprise threat telemetry, forensic case studies, multi-page executive dossier,
+ * regulatory evidence registry, and sandboxed read-only SQL terminal.
  */
 
 const titles = {
-  dashboard: ['Security Overview', 'Real-world cybersecurity breach intelligence workspace'],
-  database: ['Breach Database', 'Search and inspect verified historical records in SQLite'],
-  'case-study': ['Incident Case Studies', 'In-depth root cause and technical forensics post-mortems'],
-  reports: ['Executive Summary Report', 'Comprehensive briefing and threat analysis across all documented incidents'],
-  analytics: ['Threat Analytics', 'Empirical aggregate metrics calculated from historical breaches'],
-  sql: ['SQL Explorer', 'Interactive toggle query builder with safe read-only execution'],
-  sources: ['Data Sources & Citations', '100% authentic citations from regulatory dockets and advisories'],
-  about: ['System Architecture', 'Cybersecurity case study & threat modeling platform']
+  dashboard: ['Threat Operations Center', 'Global cybersecurity incident and credential exposure workspace'],
+  database: ['Incident Master Repository', 'Query, filter, and inspect verified historical data breaches and exposures'],
+  'case-study': ['Forensic Autopsies', 'In-depth root cause and technical forensics post-mortems'],
+  reports: ['Executive Intelligence Dossier', 'Comprehensive multi-page briefing and threat analysis across all documented incidents'],
+  analytics: ['Exposure Metrics & Analytics', 'Empirical aggregate metrics calculated from historical breaches'],
+  sql: ['SQL Terminal & Console', 'Interactive toggle query builder with safe read-only execution'],
+  sources: ['Regulatory Evidence Registry', '100% authentic citations from regulatory enforcement dockets and advisories'],
+  about: ['System Architecture & Governance', 'Enterprise cybersecurity threat modeling and intelligence platform']
 };
 
 let currentPage = 1;
@@ -50,8 +50,7 @@ function showToast(message, type = 'info') {
   if (!container) return;
   const toast = document.createElement('div');
   toast.className = 'toast';
-  const icon = type === 'success' ? '✓ ' : 'ℹ ';
-  toast.textContent = icon + message;
+  toast.textContent = message;
   container.appendChild(toast);
   setTimeout(() => {
     toast.style.opacity = '0';
@@ -298,7 +297,7 @@ async function loadDatabase() {
     const tbody = document.getElementById('databaseRows');
 
     if (rows.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" class="empty">No matching authentic breach records found in SQLite database</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="empty">No matching incident records found in repository</td></tr>';
     } else {
       tbody.innerHTML = rows.map(renderRow).join('');
       bindRowClicks('databaseRows');
@@ -312,7 +311,7 @@ async function loadDatabase() {
 
     renderPaginationControls(data.page, data.total_pages);
   } catch (err) {
-    console.error('Error loading breach database:', err);
+    console.error('Error loading incident database:', err);
   }
 }
 
@@ -346,7 +345,7 @@ async function loadCaseStudy(breachId = 'PBM-EQFX') {
     if (json.status !== 'success') return;
 
     const cs = json.data;
-    document.getElementById('caseEyebrow').textContent = `Case ${cs.breach_id} · Analysis`;
+    document.getElementById('caseEyebrow').textContent = `Investigation ${cs.breach_id} · Post-Mortem`;
     document.getElementById('caseTitle').textContent = cs.title;
     document.getElementById('caseSubtitle').textContent = cs.subtitle;
     
@@ -381,7 +380,7 @@ async function loadCaseStudy(breachId = 'PBM-EQFX') {
     document.getElementById('caseImpactMetrics').innerHTML = `
       <div class="metric"><b>${metrics.records || 'N/A'}</b><small>Records Compromised</small></div>
       <div class="metric"><b>${metrics.exposure_window || 'N/A'}</b><small>Exposure Window</small></div>
-      <div class="metric"><b>${metrics.regulatory_fines || metrics.financial_impact || 'Settled'}</b><small>Fines / Recovery</small></div>
+      <div class="metric"><b>${metrics.regulatory_fines || metrics.financial_impact || 'Settled'}</b><small>Regulatory Penalty</small></div>
       <div class="metric"><b>${metrics.plaintext_passwords || '0'}</b><small>Plaintext Passwords</small></div>
     `;
 
@@ -396,7 +395,7 @@ async function loadCaseStudy(breachId = 'PBM-EQFX') {
         </div>
       `).join('');
     } else {
-      srcListEl.innerHTML = '<span class="subtle">Verified against public regulatory dockets.</span>';
+      srcListEl.innerHTML = '<span class="subtle">Verified against public regulatory dockets and filings.</span>';
     }
 
     const select = document.getElementById('caseStudySelect');
@@ -408,10 +407,10 @@ async function loadCaseStudy(breachId = 'PBM-EQFX') {
   }
 }
 
-// CONSOLIDATED EXECUTIVE REPORT GENERATOR (ALL DATA SUMMARY)
+// CONSOLIDATED 8-PAGE EXECUTIVE INTELLIGENCE DOSSIER
 async function loadReportView() {
   const contentEl = document.getElementById('reportDynamicContent');
-  contentEl.innerHTML = '<div style="padding:40px; text-align:center;" class="mono subtle">Compiling executive intelligence summary for all database records...</div>';
+  contentEl.innerHTML = '<div style="padding:40px; text-align:center;" class="mono subtle">Synthesizing 8-page executive threat intelligence dossier...</div>';
 
   try {
     const res = await fetch('/api/reports/summary');
@@ -420,7 +419,7 @@ async function loadReportView() {
     currentActiveReport = json.data;
     renderAllDataSummaryReport(json.data);
   } catch (err) {
-    contentEl.innerHTML = `<div class="error-banner">Failed to generate consolidated report: ${err.message}</div>`;
+    contentEl.innerHTML = `<div class="error-banner">Failed to generate intelligence dossier: ${err.message}</div>`;
   }
 }
 
@@ -428,20 +427,20 @@ function renderAllDataSummaryReport(sum) {
   const contentEl = document.getElementById('reportDynamicContent');
 
   contentEl.innerHTML = `
-    <!-- Executive Document Header -->
+    <!-- PAGE 1: TITLE, CLASSIFICATION, EXECUTIVE BRIEFING & MACRO SCORECARD -->
     <div class="report-header">
       <div class="report-header-top">
         <span class="report-badge-confidential">${sum.classification}</span>
-        <span class="subtle mono" style="font-size:11px;">REPORT ID: ${sum.report_id} · GENERATED: ${sum.generated_at}</span>
+        <span class="subtle mono" style="font-size:11px;">DOSSIER ID: ${sum.report_id} · GENERATED: ${sum.generated_at}</span>
       </div>
       <h1 class="report-title">${sum.title}</h1>
       <p class="report-subtitle">${sum.subtitle}</p>
     </div>
 
-    <!-- Macro Exposure & Threat Scorecard -->
+    <!-- Macro Exposure Scorecard -->
     <div class="report-meta-grid">
       <div class="report-meta-item">
-        <small>Total Verified Breaches</small>
+        <small>Total Audited Incidents</small>
         <b>${fmt(sum.total_authentic_incidents)} Incidents</b>
       </div>
       <div class="report-meta-item">
@@ -453,20 +452,26 @@ function renderAllDataSummaryReport(sum) {
         <b>${sum.critical_incidents_count} (${sum.critical_percentage})</b>
       </div>
       <div class="report-meta-item">
-        <small>Dataset Certification</small>
-        <b>100% Real & Verified</b>
+        <small>Data Source Validation</small>
+        <b>100% Statutory Filings</b>
       </div>
     </div>
 
-    <!-- 1. Executive Summary -->
+    <!-- 1. Executive Briefing -->
     <section class="report-section">
-      <h3 class="report-section-title">1. Executive Summary & Threat Landscape Synopsis</h3>
+      <h3 class="report-section-title">1. Executive Summary & Threat Telemetry Briefing</h3>
       <p class="report-body-text">${sum.executive_summary}</p>
     </section>
 
+    <!-- PAGE 2: SECTOR RISK RANKING & ATTACK VECTOR TAXONOMY -->
+    <div class="report-page-divider report-page-break">
+      <span class="report-page-number">PAGE 2 OF 8 · SECTOR RISK & EXPLOITATION TAXONOMY</span>
+      <span class="report-page-number">PBM INTELLIGENCE</span>
+    </div>
+
     <!-- 2. Targeted Industry Risk Matrix -->
     <section class="report-section">
-      <h3 class="report-section-title">2. Targeted Industry Risk & Exposure Distribution</h3>
+      <h3 class="report-section-title">2. Sector Exposure & Industry Risk Ranking</h3>
       <div class="report-table-wrapper">
         <table class="report-table">
           <thead>
@@ -518,7 +523,7 @@ function renderAllDataSummaryReport(sum) {
                 <td><strong>${vec.attack_vector}</strong></td>
                 <td class="mono">${vec.count}</td>
                 <td class="mono"><strong>${vec.records_formatted}</strong></td>
-                <td style="font-size:11.5px; color:#475569;">${getVectorSummaryNote(vec.attack_vector)}</td>
+                <td style="font-size:11px; color:#475569;">${getVectorSummaryNote(vec.attack_vector)}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -526,9 +531,18 @@ function renderAllDataSummaryReport(sum) {
       </div>
     </section>
 
+    <!-- PAGE 3: HISTORICAL THREAT ERAS & EVOLUTION -->
+    <div class="report-page-divider report-page-break">
+      <span class="report-page-number">PAGE 3 OF 8 · HISTORICAL THREAT EVOLUTION</span>
+      <span class="report-page-number">PBM INTELLIGENCE</span>
+    </div>
+
     <!-- 4. Chronological Incident Evolution -->
     <section class="report-section">
-      <h3 class="report-section-title">4. Historical Threat Evolution & Attack Eras</h3>
+      <h3 class="report-section-title">4. Historical Threat Evolution & Decade-by-Decade Attack Eras</h3>
+      <p class="report-body-text" style="margin-bottom:12px;">
+        Empirical timeline telemetry tracking the shift from early unencrypted database dumps (2009–2014) to advanced supply chain backdoors (2020) and automated cloud tenant infostealer scraping campaigns (2023–2026).
+      </p>
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:8px; margin-top:10px;">
         ${(sum.chronological_eras || []).map(era => `
           <div class="report-card" style="text-align:center; padding:10px 8px;">
@@ -540,9 +554,15 @@ function renderAllDataSummaryReport(sum) {
       </div>
     </section>
 
+    <!-- PAGE 4: LANDMARK CASE STUDIES FORENSIC AUTOPSIES -->
+    <div class="report-page-divider report-page-break">
+      <span class="report-page-number">PAGE 4 OF 8 · LANDMARK FORENSIC AUTOPSIES</span>
+      <span class="report-page-number">PBM INTELLIGENCE</span>
+    </div>
+
     <!-- 5. Landmark Case Studies Synopsis -->
     <section class="report-section">
-      <h3 class="report-section-title">5. Landmark Case Studies Forensic Summary</h3>
+      <h3 class="report-section-title">5. Landmark Case Studies Forensic Autopsies (12 Investigations)</h3>
       <div class="report-table-wrapper">
         <table class="report-table">
           <thead>
@@ -577,9 +597,79 @@ function renderAllDataSummaryReport(sum) {
       </div>
     </section>
 
-    <!-- 6. NIST CSF 2.0 Mapping Matrix -->
+    <!-- PAGE 5: MITRE ATT&CK FRAMEWORK MATRIX -->
+    <div class="report-page-divider report-page-break">
+      <span class="report-page-number">PAGE 5 OF 8 · MITRE ATT&CK FRAMEWORK MAPPING</span>
+      <span class="report-page-number">PBM INTELLIGENCE</span>
+    </div>
+
+    <!-- 6. MITRE ATT&CK Mapping -->
     <section class="report-section">
-      <h3 class="report-section-title">6. NIST Cybersecurity Framework (CSF 2.0) Strategic Control Matrix</h3>
+      <h3 class="report-section-title">6. MITRE ATT&CK Enterprise Matrix & Adversary TTP Telemetry</h3>
+      <div class="report-table-wrapper">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th style="width:20%;">ATT&CK Tactic</th>
+              <th style="width:28%;">Techniques & Identifiers</th>
+              <th style="width:52%;">Observed Incident Telemetry & Exploitation Pattern</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(sum.mitre_attack_matrix || []).map(m => `
+              <tr>
+                <td><strong>${m.tactic}</strong><br><small class="subtle mono">${m.id}</small></td>
+                <td style="font-size:11px; font-family:ui-monospace, monospace; color:#1e3a8a;">${m.technique}</td>
+                <td style="font-size:11.5px; line-height:1.45;">${m.telemetry}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE 6: STATUTORY ENFORCEMENT & REGULATORY PENALTIES -->
+    <div class="report-page-divider report-page-break">
+      <span class="report-page-number">PAGE 6 OF 8 · STATUTORY ENFORCEMENT & LEGAL PENALTIES</span>
+      <span class="report-page-number">PBM INTELLIGENCE</span>
+    </div>
+
+    <!-- 7. Regulatory Penalties & Statutory Analysis -->
+    <section class="report-section">
+      <h3 class="report-section-title">7. Regulatory Impact, Statutory Fines & Legal Enforcement Analysis</h3>
+      <div class="report-table-wrapper">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th style="width:22%;">Regulatory Authority</th>
+              <th style="width:24%;">Statutory Basis</th>
+              <th style="width:20%;">Notable Penalties</th>
+              <th style="width:34%;">Mandated Corrective Action Order</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(sum.regulatory_statutory_impact || []).map(r => `
+              <tr>
+                <td><strong>${r.authority}</strong></td>
+                <td style="font-size:11px; color:#475569;">${r.statute}</td>
+                <td style="font-size:11px; font-weight:700; color:#dc2626;">${r.penalties}</td>
+                <td style="font-size:11px; line-height:1.45;">${r.mandate}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE 7: NIST CSF 2.0 MATRIX & MULTI-PHASE CISO ROADMAP -->
+    <div class="report-page-divider report-page-break">
+      <span class="report-page-number">PAGE 7 OF 8 · NIST CSF 2.0 & MULTI-PHASE CISO ROADMAP</span>
+      <span class="report-page-number">PBM INTELLIGENCE</span>
+    </div>
+
+    <!-- 8. NIST CSF 2.0 Mapping Matrix -->
+    <section class="report-section">
+      <h3 class="report-section-title">8. NIST Cybersecurity Framework (CSF 2.0) Strategic Control Matrix</h3>
       <div class="report-table-wrapper">
         <table class="report-table">
           <thead>
@@ -594,7 +684,7 @@ function renderAllDataSummaryReport(sum) {
               <tr>
                 <td><span class="badge ${m.function.includes('GOVERN') || m.function.includes('PROTECT') || m.function.includes('IDENTIFY') ? 'critical' : 'medium'}">${m.function}</span></td>
                 <td><strong>${m.control}</strong></td>
-                <td style="line-height:1.45; font-size:11.5px;">${m.finding}</td>
+                <td style="line-height:1.45; font-size:11px;">${m.finding}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -602,21 +692,33 @@ function renderAllDataSummaryReport(sum) {
       </div>
     </section>
 
-    <!-- 7. Strategic CISO Action Plan -->
+    <!-- 9. Prioritized Multi-Phase CISO Remediation Roadmap -->
     <section class="report-section">
-      <h3 class="report-section-title">7. Strategic CISO Directives & Systemic Defense Roadmap</h3>
-      <div style="display:grid; gap:8px; margin-top:10px;">
-        ${(sum.strategic_recommendations || []).map(r => `
-          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px 14px; border-radius:var(--radius); font-size:12px; color:#1e293b; line-height:1.55;">
-            ${r}
+      <h3 class="report-section-title">9. Prioritized Multi-Phase CISO Remediation Roadmap</h3>
+      <div style="display:grid; gap:10px; margin-top:8px;">
+        ${(sum.ciso_remediation_phases || []).map(p => `
+          <div class="report-phase-card">
+            <div class="report-phase-title">${p.phase} — <em>${p.focus}</em></div>
+            <ul class="report-phase-list">
+              ${p.actions.map(act => `<li>${act}</li>`).join('')}
+            </ul>
           </div>
         `).join('')}
       </div>
     </section>
 
-    <!-- 8. Verified Data Sources & Regulatory References -->
+    <!-- PAGE 8: EVIDENTIARY REGULATORY REGISTRY & SOURCES -->
+    <div class="report-page-divider report-page-break">
+      <span class="report-page-number">PAGE 8 OF 8 · STATUTORY EVIDENCE REGISTRY</span>
+      <span class="report-page-number">PBM INTELLIGENCE</span>
+    </div>
+
+    <!-- 10. Verified Regulatory Sources & Citations -->
     <section class="report-section">
-      <h3 class="report-section-title">8. Verified Regulatory Sources & Citations</h3>
+      <h3 class="report-section-title">10. Statutory Evidence Registry, Legal Dockets & Regulatory Citations</h3>
+      <p class="report-body-text" style="margin-bottom:10px;">
+        All empirical findings and metrics in this dossier are verified against legal settlements, SEC 8-K filings, DOJ indictments, and official threat research advisories.
+      </p>
       <div class="report-sources-list">
         ${(sum.sources_and_citations || []).map(s => `
           <div style="font-size:11px; margin-bottom:8px; line-height:1.45;">
@@ -645,22 +747,22 @@ function getVectorSummaryNote(vector) {
   return map[vector] || 'Exploitation of perimeter controls and unauthorized access.';
 }
 
-// Generate Downloadable Report Content
+// Generate Downloadable Report Plain Text
 function getReportPlainText() {
   if (!currentActiveReport) return '';
   const s = currentActiveReport;
   let text = `================================================================================\n`;
   text += `${s.title.toUpperCase()}\n`;
   text += `${s.subtitle}\n`;
-  text += `Classification: ${s.classification} | Report ID: ${s.report_id}\n`;
+  text += `Classification: ${s.classification} | Dossier ID: ${s.report_id}\n`;
   text += `Generated At: ${s.generated_at} | Scope: ${s.dataset_scope}\n`;
   text += `================================================================================\n\n`;
-  text += `1. EXECUTIVE SUMMARY:\n${s.executive_summary}\n\n`;
+  text += `[PAGE 1] 1. EXECUTIVE SUMMARY:\n${s.executive_summary}\n\n`;
   text += `2. MACRO EXPOSURE SCORECARD:\n`;
-  text += `- Total Verified Breaches: ${s.total_authentic_incidents}\n`;
+  text += `- Total Audited Incidents: ${s.total_authentic_incidents}\n`;
   text += `- Total Records Compromised: ${s.total_records_exposed}\n`;
   text += `- Critical Severity Share: ${s.critical_incidents_count} (${s.critical_percentage})\n\n`;
-  text += `3. TOP TARGETED INDUSTRIES:\n`;
+  text += `[PAGE 2] 3. SECTOR RISK RANKING:\n`;
   s.industry_risk_ranking.forEach(ind => {
     text += `- ${ind.industry}: ${ind.count} breaches (${ind.records_formatted} records)\n`;
   });
@@ -668,26 +770,38 @@ function getReportPlainText() {
   s.attack_vector_taxonomy.forEach(vec => {
     text += `- ${vec.attack_vector}: ${vec.count} breaches (${vec.records_formatted} records)\n`;
   });
-  text += `\n5. STRATEGIC CISO DIRECTIVES & SYSTEMIC RECOMMENDATIONS:\n`;
-  s.strategic_recommendations.forEach(r => text += `${r}\n\n`);
-  text += `6. VERIFIED REGULATORY SOURCES & CITATIONS:\n`;
+  text += `\n[PAGE 5] 5. MITRE ATT&CK FRAMEWORK MAPPING:\n`;
+  (s.mitre_attack_matrix || []).forEach(m => {
+    text += `- ${m.tactic} (${m.id}): ${m.technique} -> ${m.telemetry}\n`;
+  });
+  text += `\n[PAGE 6] 6. STATUTORY REGULATORY PENALTIES:\n`;
+  (s.regulatory_statutory_impact || []).forEach(r => {
+    text += `- ${r.authority} [${r.statute}]: ${r.penalties} -> ${r.mandate}\n`;
+  });
+  text += `\n[PAGE 7] 7. PRIORITIZED CISO REMEDIATION PHASES:\n`;
+  (s.ciso_remediation_phases || []).forEach(p => {
+    text += `\n${p.phase} (${p.focus}):\n`;
+    p.actions.forEach(a => text += `  * ${a}\n`);
+  });
+  text += `\n[PAGE 8] 8. STATUTORY EVIDENCE REGISTRY & SOURCES:\n`;
   (s.sources_and_citations || []).forEach(src => {
     text += `- ${src.authority_or_publisher} (${src.publication_year}): ${src.title} [${src.url}]\n`;
   });
   return text;
 }
 
+// Generate Downloadable Report Markdown
 function getReportMarkdown() {
   if (!currentActiveReport) return '';
   const s = currentActiveReport;
   let md = `# ${s.title}\n\n`;
   md += `> **Subtitle**: ${s.subtitle}  \n`;
-  md += `> **Classification**: ${s.classification} | **Report ID**: \`${s.report_id}\`  \n`;
+  md += `> **Classification**: ${s.classification} | **Dossier ID**: \`${s.report_id}\`  \n`;
   md += `> **Generated**: ${s.generated_at} | **Scope**: ${s.dataset_scope}\n\n`;
   md += `## 1. Executive Summary\n\n${s.executive_summary}\n\n`;
   md += `## 2. Quantitative Macro Exposure Scorecard\n\n`;
   md += `| Metric | Value |\n| :--- | :--- |\n`;
-  md += `| **Total Verified Breaches** | ${fmt(s.total_authentic_incidents)} |\n`;
+  md += `| **Total Audited Incidents** | ${fmt(s.total_authentic_incidents)} |\n`;
   md += `| **Total Records Compromised** | ${s.total_records_exposed} |\n`;
   md += `| **Critical Severity Incidents** | ${s.critical_incidents_count} (${s.critical_percentage}) |\n\n`;
   md += `## 3. Targeted Industry Risk Ranking\n\n`;
@@ -700,9 +814,21 @@ function getReportMarkdown() {
   s.attack_vector_taxonomy.forEach(vec => {
     md += `| **${vec.attack_vector}** | ${vec.count} | ${vec.records_formatted} |\n`;
   });
-  md += `\n## 5. Strategic CISO Directives & Defense Roadmap\n\n`;
-  s.strategic_recommendations.forEach(r => md += `- ${r}\n`);
-  md += `\n## 6. Verified Regulatory Sources & Citations\n\n`;
+  md += `\n## 5. MITRE ATT&CK Enterprise Matrix\n\n`;
+  (s.mitre_attack_matrix || []).forEach(m => {
+    md += `- **${m.tactic}** (\`${m.id}\`): *${m.technique}* — ${m.telemetry}\n`;
+  });
+  md += `\n## 6. Statutory Regulatory Penalties\n\n`;
+  (s.regulatory_statutory_impact || []).forEach(r => {
+    md += `- **${r.authority}** (\`${r.statute}\`): **${r.penalties}** — *${r.mandate}*\n`;
+  });
+  md += `\n## 7. Prioritized CISO Remediation Phases\n\n`;
+  (s.ciso_remediation_phases || []).forEach(p => {
+    md += `### ${p.phase} — *${p.focus}*\n\n`;
+    p.actions.forEach(act => md += `- ${act}\n`);
+    md += `\n`;
+  });
+  md += `\n## 8. Statutory Evidence Registry & Citations\n\n`;
   (s.sources_and_citations || []).forEach(src => {
     md += `1. **${src.authority_or_publisher}** (${src.publication_year}): [${src.title}](${src.url}) — *${src.citation_note || ''}*\n`;
   });
@@ -742,7 +868,7 @@ async function loadSourcesCatalog() {
           </div>
           <h4>${s.title}</h4>
           <p><strong>Authority:</strong> ${s.authority_or_publisher}<br>${s.citation_note ? `<span class="subtle">${s.citation_note}</span>` : ''}</p>
-          <a class="link-btn" href="${s.url}" target="_blank" rel="noopener noreferrer">↗ Open Verified Source Link</a>
+          <a class="link-btn" href="${s.url}" target="_blank" rel="noopener noreferrer">View Statutory Filing</a>
         </div>
       `).join('');
     }
@@ -866,7 +992,7 @@ async function runSqlQuery(sqlQueryOverride) {
   const historyList = document.getElementById('history');
 
   errorBox.style.display = 'none';
-  metaSpan.textContent = 'Executing...';
+  metaSpan.textContent = 'Executing query...';
 
   try {
     const res = await fetch('/api/sql/execute', {
@@ -884,7 +1010,7 @@ async function runSqlQuery(sqlQueryOverride) {
       headersTr.innerHTML = '<tr>' + (data.columns || []).map(c => `<th>${c}</th>`).join('') + '</tr>';
 
       if (data.rows.length === 0) {
-        rowsTbody.innerHTML = `<tr><td colspan="${data.columns.length || 1}" class="empty">0 rows returned from SQLite</td></tr>`;
+        rowsTbody.innerHTML = `<tr><td colspan="${data.columns.length || 1}" class="empty">0 rows returned from database query</td></tr>`;
       } else {
         rowsTbody.innerHTML = data.rows.map(r => `<tr>${r.map(val => `<td>${val !== null ? val : 'NULL'}</td>`).join('')}</tr>`).join('');
       }
@@ -893,16 +1019,16 @@ async function runSqlQuery(sqlQueryOverride) {
       historyList.insertAdjacentHTML('afterbegin', `<div class="list-item" onclick="applyPresetSql(\`${sql.replace(/`/g, '\\`')}\`)">${firstLine}...<span class="history-time">${now} · ${data.execution_time_ms} ms</span></div>`);
 
     } else {
-      metaSpan.textContent = 'Error';
+      metaSpan.textContent = 'Query Error';
       errorBox.style.display = 'block';
       errorBox.textContent = data.error || 'Execution failed.';
       headersTr.innerHTML = '';
       rowsTbody.innerHTML = '';
 
-      historyList.insertAdjacentHTML('afterbegin', `<div class="list-item" style="color:var(--red)">Blocked Mutation/Admin Query<span class="history-time">${now} · Error</span></div>`);
+      historyList.insertAdjacentHTML('afterbegin', `<div class="list-item" style="color:var(--red)">Blocked Administrative/Mutation Query<span class="history-time">${now} · Blocked</span></div>`);
     }
   } catch (err) {
-    metaSpan.textContent = 'Error';
+    metaSpan.textContent = 'Query Error';
     errorBox.style.display = 'block';
     errorBox.textContent = `Server Error: ${err.message}`;
   }
@@ -925,7 +1051,7 @@ async function loadSqlExamples() {
 
     const list = document.getElementById('sqlExamplesList');
     list.innerHTML = json.data.map(ex => `
-      <button class="list-item" onclick="applyPresetSql(\`${ex.sql.replace(/`/g, '\\`')}\`)">⚡ ${ex.name}</button>
+      <button class="list-item" onclick="applyPresetSql(\`${ex.sql.replace(/`/g, '\\`')}\`)">${ex.name}</button>
     `).join('');
   } catch (err) {
     console.error('Failed to load SQL examples:', err);
@@ -1172,7 +1298,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (refreshReportBtn) {
     refreshReportBtn.onclick = () => {
       loadReportView();
-      showToast('Executive summary report refreshed.', 'success');
+      showToast('Executive intelligence dossier refreshed.');
     };
   }
 
@@ -1190,9 +1316,9 @@ document.addEventListener('DOMContentLoaded', () => {
     copyReportBtn.onclick = () => {
       const text = getReportPlainText();
       navigator.clipboard.writeText(text).then(() => {
-        showToast('Executive report summary copied to clipboard!', 'success');
+        showToast('Executive dossier plain text copied to clipboard.');
       }).catch(err => {
-        showToast('Failed to copy: ' + err, 'error');
+        showToast('Failed to copy: ' + err);
       });
     };
   }
@@ -1202,9 +1328,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (downloadMdBtn) {
     downloadMdBtn.onclick = () => {
       const md = getReportMarkdown();
-      const filename = `executive_breach_summary_report.md`;
+      const filename = `global_cyber_threat_dossier.md`;
       downloadFile(md, filename, 'text/markdown');
-      showToast(`Downloaded ${filename}`, 'success');
+      showToast(`Downloaded ${filename}`);
     };
   }
 
@@ -1213,9 +1339,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (downloadTxtBtn) {
     downloadTxtBtn.onclick = () => {
       const txt = getReportPlainText();
-      const filename = `executive_breach_summary_report.txt`;
+      const filename = `global_cyber_threat_dossier.txt`;
       downloadFile(txt, filename, 'text/plain');
-      showToast(`Downloaded ${filename}`, 'success');
+      showToast(`Downloaded ${filename}`);
     };
   }
 
@@ -1225,9 +1351,9 @@ document.addEventListener('DOMContentLoaded', () => {
     downloadJsonBtn.onclick = () => {
       if (!currentActiveReport) return;
       const jsonStr = JSON.stringify(currentActiveReport, null, 2);
-      const filename = `executive_breach_summary_report.json`;
+      const filename = `global_cyber_threat_dossier.json`;
       downloadFile(jsonStr, filename, 'application/json');
-      showToast(`Exported ${filename}`, 'success');
+      showToast(`Exported ${filename}`);
     };
   }
 
@@ -1236,7 +1362,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (downloadSourcesTxtBtn) {
     downloadSourcesTxtBtn.onclick = () => {
       downloadFile(currentRawSourcesText, 'DATA_SOURCES.txt', 'text/plain');
-      showToast('Downloaded DATA_SOURCES.txt', 'success');
+      showToast('Downloaded DATA_SOURCES.txt');
     };
   }
 
@@ -1244,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (copySourcesTxtBtn) {
     copySourcesTxtBtn.onclick = () => {
       navigator.clipboard.writeText(currentRawSourcesText).then(() => {
-        showToast('All source citations copied to clipboard!', 'success');
+        showToast('All statutory citations copied to clipboard.');
       });
     };
   }
