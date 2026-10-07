@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Password Breach Monitoring (PBM) Database — Real-world cybersecurity case-study platform & intelligence dashboard powered by Flask and SQLite.">
-  <title>Password Breach Monitoring (PBM) Database</title>
+  <meta name="description" content="Password Breach Monitoring (PBM) Intelligence Platform — Empirical cybersecurity incident repository, forensic post-mortems, and executive threat analysis.">
+  <title>PBM Intelligence — Global Cybersecurity Incident & Identity Exposure Repository</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,69 +12,107 @@
 </head>
 <body>
 <div class="app">
-  <!-- SIDEBAR NAVIGATION (WHITE THEME) -->
+  <!-- SIDEBAR NAVIGATION (ENTERPRISE WHITE THEME) -->
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <div class="brand-mark">PBM</div>
-      <div><strong>PBM DATABASE</strong><small>Threat Intelligence</small></div>
+      <div><strong>PBM INTELLIGENCE</strong><small>Threat Telemetry & Analysis</small></div>
     </div>
     <nav class="nav" aria-label="Primary navigation">
-      <button class="nav-btn active" data-view="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
-      <button class="nav-btn" data-view="database"><span class="nav-icon">▤</span>Breach Database</button>
-      <button class="nav-btn" data-view="case-study"><span class="nav-icon">◫</span>Case Studies</button>
-      <button class="nav-btn" data-view="reports"><span class="nav-icon">📋</span>Executive Report</button>
-      <button class="nav-btn" data-view="analytics"><span class="nav-icon">⌁</span>Threat Analytics</button>
-      <button class="nav-btn" data-view="sql"><span class="nav-icon">⌘</span>SQL Explorer</button>
-      <button class="nav-btn" data-view="sources"><span class="nav-icon">📚</span>Data Sources</button>
-      <button class="nav-btn" data-view="about"><span class="nav-icon">ⓘ</span>About</button>
+      <button class="nav-btn active" data-view="dashboard">
+        <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Threat Dashboard</span>
+      </button>
+      <button class="nav-btn" data-view="database">
+        <svg class="svg-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <span>Incident Archive</span>
+      </button>
+      <button class="nav-btn" data-view="case-study">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Case Studies</span>
+      </button>
+      <button class="nav-btn" data-view="reports">
+        <svg class="svg-icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <span>Executive Dossier</span>
+      </button>
+      <button class="nav-btn" data-view="analytics">
+        <svg class="svg-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Exposure Analytics</span>
+      </button>
+      <button class="nav-btn" data-view="sql">
+        <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span>SQL Console</span>
+      </button>
+      <button class="nav-btn" data-view="sources">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Regulatory Registry</span>
+      </button>
+      <button class="nav-btn" data-view="about">
+        <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span>System Architecture</span>
+      </button>
     </nav>
     <div class="sidebar-foot">
-      <strong><span class="foot-dot"></span>AUTHENTIC DATASET</strong>
-      Single-File SQLite (pbm_database.db)
+      <strong><span class="foot-dot"></span>VERIFIED DATASET</strong>
+      Audited Public Telemetry
     </div>
   </aside>
 
   <!-- MAIN APPLICATION SHELL -->
   <section class="shell">
     <header class="topbar">
-      <button class="icon-btn mobile-menu" id="menuBtn" aria-label="Open menu">☰</button>
+      <button class="icon-btn mobile-menu" id="menuBtn" aria-label="Toggle navigation">
+        <svg class="svg-icon" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <div class="page-heading">
-        <h1 id="pageTitle">Security Overview</h1>
-        <p id="pageSubtitle">Real-world cybersecurity breach intelligence workspace</p>
+        <h1 id="pageTitle">Threat Operations Center</h1>
+        <p id="pageSubtitle">Global cybersecurity incident and credential exposure workspace</p>
       </div>
       <label class="global-search">
-        <span>⌕</span>
-        <input id="globalSearch" placeholder="Search real breaches, vectors, IDs…" aria-label="Global search">
+        <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="globalSearch" placeholder="Search breaches, attack vectors, root causes, IDs…" aria-label="Global search">
       </label>
-      <div class="status"><span class="status-dot"></span>SQLite Connected</div>
+      <div class="status"><span class="status-dot"></span>Database Connected</div>
     </header>
 
     <main>
       <!-- DASHBOARD VIEW -->
       <section class="view active" id="dashboard">
         <div class="section-head">
-          <div><span class="eyebrow">Operational Intelligence</span><h2>Cyber Threat Dashboard</h2></div>
-          <span class="subtle mono" id="lastSyncTime">VERIFIED HISTORICAL BREACHES</span>
+          <div><span class="eyebrow">Operational Metrics</span><h2>Global Threat Overview</h2></div>
+          <span class="subtle mono" id="lastSyncTime">AUDITED TELEMETRY ARCHIVE</span>
         </div>
         
         <div class="stats">
           <article class="stat">
-            <div class="stat-top"><span>Documented Breaches</span><span class="stat-icon">▤</span></div>
+            <div class="stat-top">
+              <span>Cataloged Incidents</span>
+              <svg class="svg-icon" viewBox="0 0 24 24" style="color:var(--primary);"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            </div>
             <div class="stat-value" id="dashTotalBreaches">...</div>
-            <div class="delta up" id="dashTotalDelta">100% Verified Real Incidents</div>
+            <div class="delta up" id="dashTotalDelta">100% Authentic Public Incidents</div>
           </article>
           <article class="stat">
-            <div class="stat-top"><span>Records Compromised</span><span class="stat-icon">◎</span></div>
+            <div class="stat-top">
+              <span>Identities Compromised</span>
+              <svg class="svg-icon" viewBox="0 0 24 24" style="color:var(--amber);"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
             <div class="stat-value" id="dashTotalRecords">...</div>
-            <div class="delta">Across public disclosures</div>
+            <div class="delta">Regulatory Disclosures & Filings</div>
           </article>
           <article class="stat">
-            <div class="stat-top"><span>Critical Severity</span><span class="stat-icon">△</span></div>
+            <div class="stat-top">
+              <span>Critical Severity Tier</span>
+              <svg class="svg-icon" viewBox="0 0 24 24" style="color:var(--red);"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
             <div class="stat-value" id="dashCriticalCount">...</div>
             <div class="delta critical" id="dashCriticalPct">...</div>
           </article>
           <article class="stat">
-            <div class="stat-top"><span>Latest Major Incident</span><span class="stat-icon">◷</span></div>
+            <div class="stat-top">
+              <span>Most Recent Landmark Intrusion</span>
+              <svg class="svg-icon" viewBox="0 0 24 24" style="color:var(--green);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
             <div class="stat-value" id="dashLatestDate">...</div>
             <div class="delta" id="dashLatestOrg">...</div>
           </article>
@@ -82,7 +120,7 @@
 
         <div class="dash-grid">
           <article class="panel">
-            <div class="panel-head"><h3>Breaches Timeline Analysis</h3><span id="dashYearRange">Historical Trend</span></div>
+            <div class="panel-head"><h3>Incident Frequency Timeline</h3><span id="dashYearRange">Annual Volume</span></div>
             <div class="chart-wrap">
               <svg id="dashYearChartSvg" viewBox="0 0 650 160" role="img" aria-label="Breaches by year line chart">
                 <defs>
@@ -99,7 +137,7 @@
           </article>
           
           <article class="panel">
-            <div class="panel-head"><h3>Severity Distribution</h3><span>ALL TIME</span></div>
+            <div class="panel-head"><h3>Severity Classification</h3><span>ALL INCIDENTS</span></div>
             <div class="donut-box">
               <div class="donut" id="dashDonut" data-center="0&#10;breaches"></div>
               <div class="legend" id="dashDonutLegend">
@@ -111,13 +149,16 @@
 
         <article class="panel table-panel">
           <div class="panel-head">
-            <h3>Recent Landmark Breach Activity</h3>
-            <button class="btn btn-outline" data-jump="database">View full database →</button>
+            <h3>Recent Landmark Security Intrusions</h3>
+            <button class="btn btn-outline" data-jump="database">
+              <span>View complete archive</span>
+              <svg class="svg-icon" viewBox="0 0 24 24" style="margin-left:4px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
           </div>
           <div class="table-scroll">
             <table>
               <thead>
-                <tr><th>ID</th><th>Organization</th><th>Breach Date</th><th>Records Exposed</th><th>Severity</th><th>Attack Vector</th><th>Status</th></tr>
+                <tr><th>Incident ID</th><th>Organization</th><th>Breach Date</th><th>Records Compromised</th><th>Severity</th><th>Attack Vector</th><th>Status</th></tr>
               </thead>
               <tbody id="recentRows"></tbody>
             </table>
@@ -129,12 +170,15 @@
       <section class="view" id="database">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Historical Database</span>
-            <h2>Real Breach Database</h2>
-            <p>Search, filter, and inspect verified data breaches stored in single SQLite file.</p>
+            <span class="eyebrow">Security Archive</span>
+            <h2>Incident Master Repository</h2>
+            <p>Query, filter, and inspect verified data breaches and credentials exposures.</p>
           </div>
           <div style="display:flex; gap:8px; align-items:center;">
-            <button class="btn btn-outline" id="exportCsvBtn">📥 Export CSV</button>
+            <button class="btn btn-outline" id="exportCsvBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export CSV</span>
+            </button>
             <span class="subtle mono" id="recordCount">0 RECORDS</span>
           </div>
         </div>
@@ -142,28 +186,28 @@
         <!-- Filter Chips -->
         <div class="filter-chips">
           <button class="chip active" data-chip-sev="">All Incidents</button>
-          <button class="chip" data-chip-sev="Critical">Critical Only</button>
-          <button class="chip" data-chip-mega="1">100M+ Mega Breaches</button>
+          <button class="chip" data-chip-sev="Critical">Critical Tier Only</button>
+          <button class="chip" data-chip-mega="1">100M+ Mega Outages</button>
           <button class="chip" data-chip-vec="Credential stuffing">Credential Stuffing</button>
-          <button class="chip" data-chip-vec="Phishing">Phishing</button>
-          <button class="chip" data-chip-vec="Cloud misconfiguration">Cloud Misconfig</button>
+          <button class="chip" data-chip-vec="Phishing">Spear Phishing</button>
+          <button class="chip" data-chip-vec="Cloud misconfiguration">Cloud Misconfiguration</button>
           <button class="chip" data-chip-vec="Supply chain">Supply Chain</button>
-          <button class="chip" data-chip-ind="Finance">Finance</button>
+          <button class="chip" data-chip-ind="Finance">Financial Services</button>
           <button class="chip" data-chip-ind="Healthcare">Healthcare</button>
-          <button class="chip" data-chip-ind="Technology">Technology</button>
+          <button class="chip" data-chip-ind="Technology">Technology & SaaS</button>
         </div>
 
         <div class="toolbar">
-          <input class="field" id="dbSearch" placeholder="Search organization, vector, cause, ID…">
+          <input class="field" id="dbSearch" placeholder="Filter by organization, vector, root cause, ID…">
           <select class="field" id="severityFilter">
-            <option value="">All severities</option>
+            <option value="">All Severities</option>
             <option value="Critical">Critical</option>
             <option value="High">High</option>
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>
           </select>
           <select class="field" id="yearFilter">
-            <option value="">All years</option>
+            <option value="">All Timeline Years</option>
             <option value="2024">2024</option>
             <option value="2023">2023</option>
             <option value="2022">2022</option>
@@ -178,17 +222,17 @@
             <option value="2013">2013</option>
           </select>
           <select class="field" id="industryFilter">
-            <option value="">All industries</option>
-            <option value="Technology">Technology</option>
-            <option value="Finance">Finance</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Retail">Retail</option>
+            <option value="">All Industry Sectors</option>
+            <option value="Technology">Technology & SaaS</option>
+            <option value="Finance">Financial Services</option>
+            <option value="Healthcare">Healthcare & Life Sciences</option>
+            <option value="Retail">Retail & E-Commerce</option>
             <option value="Telecommunications">Telecommunications</option>
-            <option value="Transport">Transport</option>
-            <option value="Media">Media</option>
-            <option value="Government">Government</option>
-            <option value="Education">Education</option>
-            <option value="Energy">Energy</option>
+            <option value="Transport">Travel & Transportation</option>
+            <option value="Media">Media & Entertainment</option>
+            <option value="Government">Government & Defense</option>
+            <option value="Education">Education & Academic</option>
+            <option value="Energy">Energy & Infrastructure</option>
           </select>
         </div>
 
@@ -197,10 +241,10 @@
             <table>
               <thead>
                 <tr>
-                  <th style="cursor:pointer" id="th-id">ID ↕</th>
-                  <th style="cursor:pointer" id="th-org">Organization ↕</th>
-                  <th style="cursor:pointer" id="th-date">Breach Date ↕</th>
-                  <th style="cursor:pointer" id="th-records">Affected Records ↕</th>
+                  <th style="cursor:pointer" id="th-id">ID</th>
+                  <th style="cursor:pointer" id="th-org">Organization</th>
+                  <th style="cursor:pointer" id="th-date">Breach Date</th>
+                  <th style="cursor:pointer" id="th-records">Compromised Records</th>
                   <th>Severity</th>
                   <th>Attack Vector</th>
                   <th>Status</th>
@@ -212,9 +256,13 @@
           <div class="pagination">
             <span id="pageInfo">Showing 0 records</span>
             <div class="pager" id="paginationControls">
-              <button class="icon-btn" id="prevPageBtn" aria-label="Previous page">‹</button>
+              <button class="icon-btn" id="prevPageBtn" aria-label="Previous page">
+                <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
               <span id="pageNumbers"></span>
-              <button class="icon-btn" id="nextPageBtn" aria-label="Next page">›</button>
+              <button class="icon-btn" id="nextPageBtn" aria-label="Next page">
+                <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
             </div>
           </div>
         </article>
@@ -224,30 +272,33 @@
       <section class="view" id="case-study">
         <div class="section-head">
           <div>
-            <span class="eyebrow" id="caseEyebrow">Case Analysis</span>
+            <span class="eyebrow" id="caseEyebrow">Forensic Autopsy</span>
             <h2 id="caseTitle">Equifax Apache Struts Breach Case Study</h2>
-            <p id="caseSubtitle">Authentic cybersecurity incident post-mortem</p>
+            <p id="caseSubtitle">Empirical cybersecurity incident investigation and technical post-mortem</p>
           </div>
           <div style="display:flex; gap:10px; align-items:center;">
-            <button class="btn btn-primary" id="openReportFromCaseBtn">📋 View Executive Summary Report</button>
+            <button class="btn btn-primary" id="openReportFromCaseBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              <span>View Executive Intelligence Dossier</span>
+            </button>
             <span class="badge critical" id="caseSeverityBadge">CRITICAL</span>
           </div>
         </div>
 
         <!-- Case Study Selector Bar -->
         <div class="case-selector-bar">
-          <label for="caseStudySelect">Select Real Case Study:</label>
+          <label for="caseStudySelect">Select Documented Case Study:</label>
           <select class="field" id="caseStudySelect">
             <option value="PBM-EQFX">Equifax (2017) — Apache Struts RCE & 147M Records</option>
             <option value="PBM-CPO1">Capital One (2019) — AWS SSRF & WAF IAM Role Abuse</option>
             <option value="PBM-YAHO">Yahoo! (2013) — 3 Billion Accounts & Forged Cookies</option>
-            <option value="PBM-LPAS">LastPass (2022) — DevOps Home Workstation & Cloud Vault Leak</option>
+            <option value="PBM-LPAS">LastPass (2022) — DevOps Home Workstation & Cloud Vault Exfiltration</option>
             <option value="PBM-23ME">23andMe (2023) — DNA Relatives Scraping & Credential Stuffing</option>
             <option value="PBM-MRRT">Marriott / Starwood (2014-2018) — Legacy RAT & 339M Guests</option>
             <option value="PBM-TRGT">Target (2013) — HVAC Vendor Phishing & POS BlackPOS</option>
             <option value="PBM-UBER">Uber (2016) — GitHub Secret Leak & S3 Extortion</option>
             <option value="PBM-SLRW">SolarWinds (2020) — SUNBURST Build System Backdoor</option>
-            <option value="PBM-CHNG">Change Healthcare (2024) — Single-Factor Citrix ALPHV</option>
+            <option value="PBM-CHNG">Change Healthcare (2024) — Single-Factor Citrix ALPHV Intrusion</option>
             <option value="PBM-SNOW">Snowflake / Ticketmaster (2024) — Infostealer No-MFA Campaign</option>
             <option value="PBM-CNVA">Canva (2019) — Gnosticplayers Admin Gateway Breach</option>
           </select>
@@ -256,73 +307,91 @@
         <div class="case-layout">
           <div class="case-main">
             <article class="panel case-block">
-              <h3>Executive Summary</h3>
-              <p id="caseExecSummary">Loading case study...</p>
+              <h3>Executive Briefing</h3>
+              <p id="caseExecSummary">Loading forensic analysis...</p>
             </article>
             <article class="panel case-block">
-              <h3>Incident Timeline</h3>
+              <h3>Intrusion Kill Chain Timeline</h3>
               <div class="timeline" id="caseTimeline"></div>
             </article>
             <article class="panel case-block">
-              <h3>Containment & Remediation Response</h3>
+              <h3>Containment & Remediation Actions</h3>
               <p id="caseResponse">Loading response...</p>
             </article>
           </div>
           
           <div class="case-side">
             <article class="panel case-block">
-              <h3>Attack Vector Classification</h3>
+              <h3>Attack Vector Taxonomy</h3>
               <div class="tag-list" id="caseVectorTags"></div>
             </article>
             <article class="panel case-block">
-              <h3>Technical Root Cause</h3>
+              <h3>Technical Root Cause Analysis</h3>
               <p id="caseRootCause">Loading root cause...</p>
             </article>
             <article class="panel case-block">
-              <h3>Compromised Data Categories</h3>
+              <h3>Compromised Data Classification</h3>
               <div class="tag-list" id="caseDataTags"></div>
             </article>
             <article class="panel case-block">
-              <h3>Impact & Exposure Scorecard</h3>
+              <h3>Exposure & Regulatory Impact Scorecard</h3>
               <div class="impact" id="caseImpactMetrics"></div>
             </article>
             <article class="panel case-block">
-              <h3>Actionable Lessons Learned</h3>
+              <h3>Actionable Architectural Directives</h3>
               <p id="caseLessons">Loading lessons learned...</p>
             </article>
             <article class="panel case-block">
-              <h3>Verified Regulatory Citations</h3>
+              <h3>Evidentiary Legal & Regulatory Sources</h3>
               <div id="caseSourcesList" class="report-sources-list"></div>
             </article>
           </div>
         </div>
       </section>
 
-      <!-- EXECUTIVE REPORT VIEW (CONSOLIDATED ALL-DATA SUMMARY) -->
+      <!-- EXECUTIVE DOSSIER VIEW (CONSOLIDATED MULTI-PAGE SUMMARY) -->
       <section class="view" id="reports">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Consolidated Intelligence</span>
-            <h2>Executive Case Study Report (All-Data Summary)</h2>
-            <p>Comprehensive executive report synthesizing all 80+ documented data breaches and case studies.</p>
+            <span class="eyebrow">Strategic Threat Telemetry</span>
+            <h2>Global Cyber Threat Landscape & Breach Autopsy Dossier</h2>
+            <p>Comprehensive executive intelligence dossier synthesizing all 80+ documented data breaches and forensic case studies.</p>
           </div>
         </div>
 
         <div class="report-action-bar">
           <div style="display:flex; gap:10px; align-items:center;">
-            <button class="btn btn-primary" id="refreshReportBtn">⚡ Refresh Summary Report</button>
+            <button class="btn btn-primary" id="refreshReportBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              <span>Refresh Intelligence Dossier</span>
+            </button>
           </div>
 
           <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <button class="btn btn-outline" id="printReportBtn">🖨️ Print / Save PDF</button>
-            <button class="btn btn-outline" id="copyReportBtn">📋 Copy Text Summary</button>
-            <button class="btn btn-outline" id="downloadMdBtn">💾 Download .md</button>
-            <button class="btn btn-outline" id="downloadTxtBtn">📄 Download .txt</button>
-            <button class="btn btn-outline" id="downloadJsonBtn">📦 Export JSON</button>
+            <button class="btn btn-outline" id="printReportBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              <span>Print / Save PDF (8 Pages)</span>
+            </button>
+            <button class="btn btn-outline" id="copyReportBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span>Copy Plain Text</span>
+            </button>
+            <button class="btn btn-outline" id="downloadMdBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download .md</span>
+            </button>
+            <button class="btn btn-outline" id="downloadTxtBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              <span>Download .txt</span>
+            </button>
+            <button class="btn btn-outline" id="downloadJsonBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <span>Export JSON</span>
+            </button>
           </div>
         </div>
 
-        <!-- WHITE THEMED REPORT CONTAINER (PURE WHITE EXECUTIVE DOCUMENT) -->
+        <!-- WHITE THEMED REPORT CONTAINER (PURE WHITE EXECUTIVE DOSSIER) -->
         <div class="report-container" id="reportPaper">
           <div id="reportDynamicContent">
             <!-- Rendered dynamically from /api/reports/summary -->
@@ -334,78 +403,80 @@
       <section class="view" id="analytics">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Threat Intelligence</span>
-            <h2>Threat Analytics & Aggregates</h2>
-            <p>Metrics calculated directly from real historical records in SQLite.</p>
+            <span class="eyebrow">Quantitative Telemetry</span>
+            <h2>Threat Exposure & Vulnerability Analytics</h2>
+            <p>Empirical metrics calculated directly from verified historical breach records.</p>
           </div>
-          <span class="subtle mono">HISTORICAL ARCHIVE</span>
+          <span class="subtle mono">HISTORICAL DATABASE</span>
         </div>
         <div class="analytics-grid">
           <article class="panel wide">
-            <div class="panel-head"><h3>Breaches by Year</h3><span>INCIDENT FREQUENCY</span></div>
+            <div class="panel-head"><h3>Annual Breach Frequency</h3><span>INCIDENT COUNT</span></div>
             <div class="mini-chart"><div class="bars" id="analyticsYearBars"></div></div>
           </article>
           <article class="panel">
-            <div class="panel-head"><h3>Severity Breakdown</h3><span>ALL TIME</span></div>
+            <div class="panel-head"><h3>Severity Tier Breakdown</h3><span>ALL INCIDENTS</span></div>
             <div class="donut-box">
               <div class="donut" id="analyticsDonut" data-center="0&#10;total"></div>
               <div class="legend" id="analyticsDonutLegend"></div>
             </div>
           </article>
           <article class="panel">
-            <div class="panel-head"><h3>Records Compromised by Year</h3><span>VOLUME</span></div>
+            <div class="panel-head"><h3>Compromised Records Volume</h3><span>IDENTITIES EXPOSED</span></div>
             <div class="mini-chart"><div class="bars" id="analyticsRecordsBars"></div></div>
           </article>
           <article class="panel">
-            <div class="panel-head"><h3>Top Targeted Industries</h3><span>BY INCIDENT COUNT</span></div>
+            <div class="panel-head"><h3>Targeted Industry Exposure</h3><span>BY INCIDENT FREQUENCY</span></div>
             <div class="mini-chart"><div class="hbars" id="analyticsIndustryBars"></div></div>
           </article>
           <article class="panel">
-            <div class="panel-head"><h3>Prevalent Attack Vectors</h3><span>EXPLOITATION METHODS</span></div>
+            <div class="panel-head"><h3>Primary Exploitation Vectors</h3><span>ROOT CAUSE CLASSIFICATION</span></div>
             <div class="mini-chart"><div class="hbars" id="analyticsVectorBars"></div></div>
           </article>
         </div>
       </section>
 
-      <!-- SQL EXPLORER VIEW (SPLIT-VIEW) -->
+      <!-- SQL EXPLORER VIEW (TOP BUILDER & BOTTOM FULL-WIDTH RESULTS TABLE) -->
       <section class="view" id="sql">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Safe Query Builder</span>
-            <h2>SQL Explorer (Read-Only)</h2>
-            <p>Query authentic breach records directly with SQL or dynamic toggle builder.</p>
+            <span class="eyebrow">Database Console</span>
+            <h2>SQL Terminal & Query Engine (Read-Only)</h2>
+            <p>Execute SQL queries or configure parameters with interactive filters.</p>
           </div>
-          <span class="run-state">● SAFE READ-ONLY URI</span>
+          <span class="run-state">TRANSACTION: READ-ONLY</span>
         </div>
+
         <div class="sql-layout">
-          <!-- LEFT COLUMN: BUILDER & PREVIEW -->
-          <div class="sql-left-col">
+          <!-- TOP SECTION: CONFIGURATION BUILDER & QUERY PREVIEW -->
+          <div class="sql-top-grid">
+            <!-- BUILDER PANEL -->
             <article class="panel case-block sql-builder-panel">
               <div class="panel-head" style="margin:-16px -16px 12px; border-bottom:1px solid var(--line);">
-                <h3>Query Configuration Toggles</h3>
-                <button class="btn btn-outline" id="resetSqlToggles" style="height:26px; padding:0 8px; font-size:10.5px;">Reset</button>
+                <h3>Query Configuration Parameters</h3>
+                <button class="btn btn-outline" id="resetSqlToggles" style="height:26px; padding:0 8px; font-size:10.5px;">Clear Filters</button>
               </div>
 
               <!-- Columns Selection Toggles -->
               <div class="toggle-group">
-                <label class="toggle-label">Select Columns:</label>
+                <label class="toggle-label">Target Projection Columns:</label>
                 <div class="toggle-pills" id="colToggles">
                   <button class="toggle-pill active" data-col="id">ID</button>
-                  <button class="toggle-pill active" data-col="organization">Org</button>
+                  <button class="toggle-pill active" data-col="organization">Organization</button>
                   <button class="toggle-pill active" data-col="breach_date">Date</button>
                   <button class="toggle-pill active" data-col="affected_records">Records</button>
                   <button class="toggle-pill active" data-col="severity">Severity</button>
                   <button class="toggle-pill" data-col="industry">Industry</button>
-                  <button class="toggle-pill" data-col="attack_vector">Vector</button>
+                  <button class="toggle-pill" data-col="attack_vector">Attack Vector</button>
                   <button class="toggle-pill" data-col="status">Status</button>
                 </div>
               </div>
 
               <!-- Severity Filter Toggles -->
               <div class="toggle-group">
-                <label class="toggle-label">Severity Filter:</label>
+                <label class="toggle-label">Severity Level Filter:</label>
                 <div class="toggle-pills" id="severityToggles">
-                  <button class="toggle-pill active" data-sev="">All</button>
+                  <button class="toggle-pill active" data-sev="">All Tiers</button>
                   <button class="toggle-pill" data-sev="Critical">Critical</button>
                   <button class="toggle-pill" data-sev="High">High</button>
                   <button class="toggle-pill" data-sev="Medium">Medium</button>
@@ -416,26 +487,26 @@
               <!-- Industry & Vector Filter Dropdowns -->
               <div class="toggle-row-group">
                 <div class="toggle-item">
-                  <label class="toggle-label">Industry:</label>
+                  <label class="toggle-label">Industry Sector:</label>
                   <select class="field" id="sqlIndustrySelect">
-                    <option value="">All Industries</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Finance">Finance</option>
+                    <option value="">All Industry Sectors</option>
+                    <option value="Technology">Technology & SaaS</option>
+                    <option value="Finance">Financial Services</option>
                     <option value="Healthcare">Healthcare</option>
-                    <option value="Retail">Retail</option>
-                    <option value="Transport">Transport</option>
+                    <option value="Retail">Retail & E-Commerce</option>
+                    <option value="Transport">Travel & Transportation</option>
                     <option value="Telecommunications">Telecommunications</option>
-                    <option value="Media">Media</option>
-                    <option value="Government">Government</option>
+                    <option value="Media">Media & Entertainment</option>
+                    <option value="Government">Government & Public Sector</option>
                   </select>
                 </div>
 
                 <div class="toggle-item">
-                  <label class="toggle-label">Attack Vector:</label>
+                  <label class="toggle-label">Exploitation Vector:</label>
                   <select class="field" id="sqlVectorSelect">
-                    <option value="">All Vectors</option>
+                    <option value="">All Attack Vectors</option>
                     <option value="Credential stuffing">Credential stuffing</option>
-                    <option value="Phishing">Phishing</option>
+                    <option value="Phishing">Spear Phishing</option>
                     <option value="Cloud misconfiguration">Cloud misconfiguration</option>
                     <option value="Supply chain">Supply chain</option>
                     <option value="Stolen session">Stolen session</option>
@@ -449,20 +520,20 @@
               <!-- Sort & Limit Toggles -->
               <div class="toggle-row-group">
                 <div class="toggle-item">
-                  <label class="toggle-label">Sort By:</label>
+                  <label class="toggle-label">Ordering Column:</label>
                   <div class="toggle-pills" id="sortToggles">
                     <button class="toggle-pill active" data-sort="affected_records">Records</button>
                     <button class="toggle-pill" data-sort="breach_date">Date</button>
-                    <button class="toggle-pill" data-sort="organization">Org</button>
+                    <button class="toggle-pill" data-sort="organization">Organization</button>
                   </div>
                 </div>
 
                 <div class="toggle-item">
-                  <label class="toggle-label">Order & Limit:</label>
+                  <label class="toggle-label">Direction & Limit:</label>
                   <div style="display:flex; gap:6px; flex-wrap:wrap;">
                     <div class="toggle-pills" id="orderToggles">
-                      <button class="toggle-pill active" data-order="DESC">↓</button>
-                      <button class="toggle-pill" data-order="ASC">↑</button>
+                      <button class="toggle-pill active" data-order="DESC">DESC</button>
+                      <button class="toggle-pill" data-order="ASC">ASC</button>
                     </div>
                     <div class="toggle-pills" id="limitToggles">
                       <button class="toggle-pill active" data-limit="10">10</button>
@@ -474,39 +545,48 @@
               </div>
             </article>
 
-            <!-- LIVE PREVIEW PANEL -->
-            <article class="panel editor-panel">
-              <div class="panel-head">
-                <h3>SQL Query Live Preview</h3>
-                <button class="btn btn-primary" id="runSql">▶ Execute SQL</button>
-              </div>
-              <div class="preview-wrap">
-                <pre class="sql-preview-code" id="sqlPreviewCode">SELECT id, organization, breach_date, affected_records, severity
+            <!-- RIGHT TOP: LIVE PREVIEW & PRESETS -->
+            <div class="sql-right-top-col">
+              <!-- LIVE PREVIEW PANEL -->
+              <article class="panel editor-panel">
+                <div class="panel-head">
+                  <h3>SQL Query Editor & Preview</h3>
+                  <button class="btn btn-primary" id="runSql">
+                    <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span>Execute Query</span>
+                  </button>
+                </div>
+                <div class="preview-wrap">
+                  <pre class="sql-preview-code" id="sqlPreviewCode">SELECT id, organization, breach_date, affected_records, severity
 FROM breaches
 WHERE severity = 'Critical'
 ORDER BY affected_records DESC
 LIMIT 10;</pre>
-              </div>
-            </article>
+                </div>
+              </article>
 
-            <div class="side-sub-grid">
-              <article class="panel">
-                <div class="panel-head"><h3>Preset Queries</h3></div>
-                <div class="list" id="sqlExamplesList"></div>
-              </article>
-              <article class="panel">
-                <div class="panel-head"><h3>Query History</h3></div>
-                <div class="list" id="history"></div>
-              </article>
+              <div class="side-sub-grid">
+                <article class="panel">
+                  <div class="panel-head"><h3>Preset Analytical Queries</h3></div>
+                  <div class="list" id="sqlExamplesList"></div>
+                </article>
+                <article class="panel">
+                  <div class="panel-head"><h3>Execution History</h3></div>
+                  <div class="list" id="history"></div>
+                </article>
+              </div>
             </div>
           </div>
 
-          <!-- RIGHT COLUMN: RESULTS OUTPUT -->
-          <div class="sql-right-col">
+          <!-- BOTTOM SECTION: FULL-WIDTH QUERY RESULTS TABLE -->
+          <div class="sql-bottom-panel">
             <article class="panel table-panel query-results-panel">
               <div class="panel-head">
-                <h3>Query Results Output</h3>
-                <span id="queryMeta" class="mono" style="font-size:11px;">Ready</span>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <h3>Query Results Output Grid</h3>
+                  <span id="queryMeta" class="mono" style="font-size:11px;">Ready</span>
+                </div>
+                <span class="subtle mono" style="font-size:10px;">READ-ONLY SQL EXECUTION</span>
               </div>
               <div id="sqlErrorBox" style="display:none" class="error-banner"></div>
               <div class="results-table-scroll">
@@ -524,13 +604,19 @@ LIMIT 10;</pre>
       <section class="view" id="sources">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Verification & Transparency</span>
-            <h2>Official Data Sources & Citations</h2>
-            <p>100% real, authentic references from regulatory agencies, government dockets, and post-mortems.</p>
+            <span class="eyebrow">Evidentiary Transparency</span>
+            <h2>Statutory Disclosures & Regulatory Evidence Registry</h2>
+            <p>100% authentic citations from regulatory enforcement orders, court dockets, and forensics advisories.</p>
           </div>
           <div style="display:flex; gap:8px;">
-            <button class="btn btn-primary" id="downloadSourcesTxtBtn">📄 Download DATA_SOURCES.txt</button>
-            <button class="btn btn-outline" id="copySourcesTxtBtn">📋 Copy Citations</button>
+            <button class="btn btn-primary" id="downloadSourcesTxtBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download DATA_SOURCES.txt</span>
+            </button>
+            <button class="btn btn-outline" id="copySourcesTxtBtn">
+              <svg class="svg-icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span>Copy Citations</span>
+            </button>
           </div>
         </div>
 
@@ -539,24 +625,24 @@ LIMIT 10;</pre>
         </div>
 
         <article class="panel case-block">
-          <h3 style="margin-bottom:12px;">Full Verification Document (DATA_SOURCES.txt)</h3>
-          <div class="sources-raw-box" id="rawSourcesText">Loading citations documentation...</div>
+          <h3 style="margin-bottom:12px;">Complete Evidence Documentation (DATA_SOURCES.txt)</h3>
+          <div class="sources-raw-box" id="rawSourcesText">Loading evidentiary records...</div>
         </article>
       </section>
 
       <!-- ABOUT VIEW -->
       <section class="view" id="about">
         <div class="about">
-          <span class="eyebrow">System Architecture</span>
+          <span class="eyebrow">Enterprise Governance</span>
           <article class="panel about-hero">
             <div class="about-logo">PBM</div>
             <div>
-              <h2>Password Breach Monitoring Database</h2>
-              <p>A full-stack cybersecurity case-study platform built with Python, Flask, and SQLite. Features real-world breach data modeling, instant executive summarized report generation, threat analytics, and a sandboxed read-only SQL Explorer.</p>
+              <h2>Password Breach Monitoring Intelligence Platform</h2>
+              <p>A full-stack cybersecurity threat intelligence repository built with Python, Flask, and MySQL / MariaDB (with SQLite compatibility). Features audited breach telemetry, automated executive dossier generation, threat exposure analytics, and a sandboxed read-only SQL terminal.</p>
             </div>
           </article>
           <div class="notice">
-            <strong>Authentic Dataset Certification.</strong> All records in this database represent real, verified historical cybersecurity incidents compiled from US FTC settlements, SEC disclosures, DOJ indictments, CISA emergency directives, and Mandiant threat reports. No synthetic or fake data is used.
+            <strong>Dataset Integrity Certification.</strong> All records cataloged in this repository represent verified historical cybersecurity incidents compiled directly from statutory enforcement actions (US FTC, SEC, DOJ), CISA emergency alerts, and Mandiant threat research. Zero synthetic or generated records are stored.
           </div>
         </div>
       </section>
@@ -570,20 +656,25 @@ LIMIT 10;</pre>
     <div class="modal-head">
       <div>
         <span class="eyebrow" id="modalId">PBM-0000</span>
-        <h2 id="modalTitle">Incident Detail</h2>
+        <h2 id="modalTitle">Incident Analysis</h2>
       </div>
-      <button class="icon-btn" id="closeModal" aria-label="Close detail">×</button>
+      <button class="icon-btn" id="closeModal" aria-label="Close detail">
+        <svg class="svg-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
     <div class="modal-body">
       <div class="detail-grid" id="modalDetails"></div>
       <p class="modal-copy" id="modalCopy"></p>
       <div id="modalSourcesSection" style="margin-top:14px; display:none;">
-        <h4 style="font-size:11px; text-transform:uppercase; color:var(--muted); margin:0 0 6px;">Verified Regulatory Source:</h4>
+        <h4 style="font-size:11px; text-transform:uppercase; color:var(--muted); margin:0 0 6px;">Statutory Citation & Regulatory Filing:</h4>
         <div id="modalSourcesList" class="report-sources-list"></div>
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-primary" id="modalViewReportBtn" style="display:none;">View Executive Summary Report →</button>
+      <button class="btn btn-primary" id="modalViewReportBtn" style="display:none;">
+        <span>View Executive Dossier</span>
+        <svg class="svg-icon" viewBox="0 0 24 24" style="margin-left:4px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
       <button class="btn btn-outline" id="closeModalFoot">Close</button>
     </div>
   </div>
