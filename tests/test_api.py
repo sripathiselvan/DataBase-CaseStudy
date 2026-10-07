@@ -183,6 +183,39 @@ class PbmApiTestCase(unittest.TestCase):
 
         print(f"[PASS] All {len(blocked_queries)} disallowed mutation/administrative queries were properly blocked.")
 
+    def test_13_database_info_endpoint(self):
+        """Test GET /api/db/info returns engine and connection configuration."""
+        res = self.client.get("/api/db/info")
+        self.assertEqual(res.status_code, 200)
+        data = res.get_json()
+        self.assertEqual(data["status"], "success")
+        self.assertIn("engine", data["data"])
+        self.assertIn("mysql_database", data["data"])
+        self.assertEqual(data["data"]["mysql_database"], "Case-Study")
+        print(f"[PASS] Database info endpoint verified (Active engine: {data['data']['engine']}, Target MySQL DB: {data['data']['mysql_database']}).")
+
+    def test_14_mysql_wrapper_query_translation(self):
+        """Test MySQLCursorWrapper parameter conversion logic."""
+        from app.db import MySQLCursorWrapper
+        wrapper = MySQLCursorWrapper(None)
+        
+        # Test named parameter conversion :name -> %(name)s
+        q1, p1 = wrapper._convert_query_and_params(
+            "SELECT * FROM breaches WHERE severity = :severity AND industry = :industry",
+            {"severity": "Critical", "industry": "Finance"}
+        )
+        self.assertEqual(q1, "SELECT * FROM breaches WHERE severity = %(severity)s AND industry = %(industry)s")
+        self.assertEqual(p1, {"severity": "Critical", "industry": "Finance"})
+
+        # Test positional parameter conversion ? -> %s
+        q2, p2 = wrapper._convert_query_and_params(
+            "SELECT * FROM breaches WHERE id = ?",
+            ("PBM-EQFX",)
+        )
+        self.assertEqual(q2, "SELECT * FROM breaches WHERE id = %s")
+        self.assertEqual(p2, ("PBM-EQFX",))
+        print("[PASS] MySQLCursorWrapper parameter conversion (:name -> %(name)s, ? -> %s) validated.")
+
 
 if __name__ == "__main__":
     unittest.main()

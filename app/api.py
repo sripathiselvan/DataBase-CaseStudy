@@ -11,7 +11,7 @@ import json
 import time
 from pathlib import Path
 from flask import Blueprint, jsonify, request, Response
-from app.db import get_db_connection, DB_PATH
+from app.db import get_db_connection, get_db_info, DB_PATH
 from app.sql_validator import validate_select_query
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
@@ -405,7 +405,7 @@ def generate_summary_landscape_report():
             "records_formatted": format_records_count(row["r"])
         })
 
-    cursor.execute("SELECT strftime('%Y', breach_date) as yr, COUNT(*) as c, SUM(affected_records) as r FROM breaches GROUP BY yr ORDER BY yr ASC")
+    cursor.execute("SELECT SUBSTR(breach_date, 1, 4) as yr, COUNT(*) as c, SUM(affected_records) as r FROM breaches GROUP BY yr ORDER BY yr ASC")
     timeline_eras = []
     for row in cursor.fetchall():
         timeline_eras.append({
@@ -570,7 +570,7 @@ def get_dashboard_stats():
     latest_incident = dict(latest_row) if latest_row else {"id": "N/A", "organization": "None", "breach_date": "N/A"}
 
     cursor.execute("""
-        SELECT strftime('%Y', breach_date) as year, COUNT(*) as count
+        SELECT SUBSTR(breach_date, 1, 4) as year, COUNT(*) as count
         FROM breaches
         GROUP BY year
         ORDER BY year ASC
@@ -607,7 +607,8 @@ def get_dashboard_stats():
         "by_year": by_year,
         "severity_distribution": sev_dist,
         "severity_percentages": sev_percentages,
-        "recent_activity": recent
+        "recent_activity": recent,
+        "db_info": get_db_info()
     })
 
 
@@ -618,7 +619,7 @@ def get_analytics():
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT strftime('%Y', breach_date) as year, COUNT(*) as count
+        SELECT SUBSTR(breach_date, 1, 4) as year, COUNT(*) as count
         FROM breaches
         GROUP BY year
         ORDER BY year ASC
@@ -626,7 +627,7 @@ def get_analytics():
     breaches_by_year = [dict(row) for row in cursor.fetchall()]
 
     cursor.execute("""
-        SELECT strftime('%Y', breach_date) as year, SUM(affected_records) as total_records
+        SELECT SUBSTR(breach_date, 1, 4) as year, SUM(affected_records) as total_records
         FROM breaches
         GROUP BY year
         ORDER BY year ASC
@@ -726,12 +727,17 @@ def execute_sql_query():
         conn = get_db_connection(read_only=True)
         cursor = conn.cursor()
 
-        wrapped_query = f"SELECT * FROM ({clean_query}) LIMIT 500"
+        wrapped_query = f"SELECT * FROM ({clean_query}) AS subq LIMIT 500"
         cursor.execute(wrapped_query)
 
         columns = [description[0] for description in cursor.description] if cursor.description else []
         raw_rows = cursor.fetchall()
-        rows = [list(row) for row in raw_rows]
+        rows = []
+        for r in raw_rows:
+            if isinstance(r, dict):
+                rows.append([r.get(c) for c in columns])
+            else:
+                rows.append([r[c] for c in columns] if hasattr(r, "__getitem__") else list(r))
         conn.close()
 
         execution_time_ms = round((time.perf_counter() - start_time) * 1000, 2)
@@ -774,7 +780,7 @@ def get_sql_examples():
         },
         {
             "name": "Historical Incidents by Timeline Year",
-            "sql": "SELECT strftime('%Y', breach_date) AS year, COUNT(*) AS incident_count, SUM(affected_records) AS records\nFROM breaches\nGROUP BY year\nORDER BY year DESC;"
+            "sql": "SELECT SUBSTR(breach_date, 1, 4) AS year, COUNT(*) AS incident_count, SUM(affected_records) AS records\nFROM breaches\nGROUP BY year\nORDER BY year DESC;"
         },
         {
             "name": "All Case Studies with Verified Fines/Settlements",
@@ -782,3 +788,12 @@ def get_sql_examples():
         }
     ]
     return jsonify({"status": "success", "data": examples})
+
+
+@api_bp.route("/db/info", methods=["GET"])
+def get_database_info():
+    """Returns information about the active database engine (MySQL/MariaDB vs SQLite)."""
+    return jsonify({
+        "status": "success",
+        "data": get_db_info()
+    })
