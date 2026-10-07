@@ -467,60 +467,74 @@ function renderAllDataSummaryReport(sum) {
     <!-- 2. Targeted Industry Risk Matrix -->
     <section class="report-section">
       <h3 class="report-section-title">2. Targeted Industry Risk & Exposure Distribution</h3>
-      <table class="report-table">
-        <thead>
-          <tr><th>Industry Sector</th><th>Incident Count</th><th>Total Records Exposed</th><th>Relative Exposure Volume</th></tr>
-        </thead>
-        <tbody>
-          ${(sum.industry_risk_ranking || []).map(ind => {
-            const maxR = sum.total_records_raw || 1;
-            const pct = Math.min(100, Math.max(5, Math.round((ind.records / maxR) * 100)));
-            return `
-              <tr>
-                <td><strong>${ind.industry}</strong></td>
-                <td class="mono">${ind.count}</td>
-                <td class="mono"><strong>${ind.records_formatted}</strong></td>
-                <td>
-                  <div class="track" style="height:6px; background:#f1f5f9; border-radius:3px;">
-                    <div class="fill" style="width:${pct}%; height:100%; background:linear-gradient(to right, #2563eb, #38bdf8); border-radius:3px;"></div>
-                  </div>
-                </td>
-              </tr>
-            `;
-          }).join('')}
-        </tbody>
-      </table>
+      <div class="report-table-wrapper">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th style="width:26%;">Industry Sector</th>
+              <th style="width:16%;">Incident Count</th>
+              <th style="width:26%;">Total Records Exposed</th>
+              <th style="width:32%;">Relative Exposure Volume</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(sum.industry_risk_ranking || []).map(ind => {
+              const maxR = sum.total_records_raw || 1;
+              const pct = Math.min(100, Math.max(5, Math.round((ind.records / maxR) * 100)));
+              return `
+                <tr>
+                  <td><strong>${ind.industry}</strong></td>
+                  <td class="mono">${ind.count}</td>
+                  <td class="mono"><strong>${ind.records_formatted}</strong></td>
+                  <td>
+                    <div class="track" style="height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden;">
+                      <div class="fill" style="width:${pct}%; height:100%; background:linear-gradient(to right, #2563eb, #38bdf8); border-radius:3px;"></div>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- 3. Attack Vector Taxonomy -->
     <section class="report-section">
       <h3 class="report-section-title">3. Attack Vector Taxonomy & Systemic Root Causes</h3>
-      <table class="report-table">
-        <thead>
-          <tr><th>Exploitation Vector</th><th>Incidents</th><th>Total Records Impacted</th><th>Primary Vulnerability Driver</th></tr>
-        </thead>
-        <tbody>
-          ${(sum.attack_vector_taxonomy || []).map(vec => `
+      <div class="report-table-wrapper">
+        <table class="report-table">
+          <thead>
             <tr>
-              <td><strong>${vec.attack_vector}</strong></td>
-              <td class="mono">${vec.count}</td>
-              <td class="mono"><strong>${vec.records_formatted}</strong></td>
-              <td style="font-size:11.5px; color:#475569;">${getVectorSummaryNote(vec.attack_vector)}</td>
+              <th style="width:24%;">Exploitation Vector</th>
+              <th style="width:14%;">Incidents</th>
+              <th style="width:22%;">Total Records Impacted</th>
+              <th style="width:40%;">Primary Vulnerability Driver</th>
             </tr>
-          `).join('')}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${(sum.attack_vector_taxonomy || []).map(vec => `
+              <tr>
+                <td><strong>${vec.attack_vector}</strong></td>
+                <td class="mono">${vec.count}</td>
+                <td class="mono"><strong>${vec.records_formatted}</strong></td>
+                <td style="font-size:11.5px; color:#475569;">${getVectorSummaryNote(vec.attack_vector)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- 4. Chronological Incident Evolution -->
     <section class="report-section">
       <h3 class="report-section-title">4. Historical Threat Evolution & Attack Eras</h3>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-top:10px;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:8px; margin-top:10px;">
         ${(sum.chronological_eras || []).map(era => `
-          <div class="report-card" style="text-align:center;">
-            <small style="font-size:10px;">${era.year}</small>
-            <div class="val" style="font-size:14px; margin-top:2px;">${era.incidents} breaches</div>
-            <div class="subtle mono" style="font-size:10px; margin-top:2px;">${era.records} rec</div>
+          <div class="report-card" style="text-align:center; padding:10px 8px;">
+            <small style="font-size:9.5px; font-weight:700; color:#64748b;">${era.year}</small>
+            <div class="val" style="font-size:13px; margin-top:2px; color:#1e293b;">${era.incidents} breaches</div>
+            <div class="subtle mono" style="font-size:9.5px; margin-top:2px;">${era.records} records</div>
           </div>
         `).join('')}
       </div>
@@ -529,49 +543,63 @@ function renderAllDataSummaryReport(sum) {
     <!-- 5. Landmark Case Studies Synopsis -->
     <section class="report-section">
       <h3 class="report-section-title">5. Landmark Case Studies Forensic Summary</h3>
-      <table class="report-table">
-        <thead>
-          <tr><th style="width:90px;">Case ID</th><th style="width:170px;">Organization & Incident</th><th>Impact</th><th>Technical Root Cause</th><th>Actionable Lesson</th></tr>
-        </thead>
-        <tbody>
-          ${(sum.case_studies_summaries || []).map(cs => `
+      <div class="report-table-wrapper">
+        <table class="report-table">
+          <thead>
             <tr>
-              <td class="mono"><strong>${cs.breach_id}</strong></td>
-              <td>
-                <strong>${cs.title}</strong><br>
-                <small class="subtle mono">${cs.date}</small>
-                <span class="badge ${getBadgeClass(cs.severity)}" style="margin-left:4px; font-size:8px;">${cs.severity.toUpperCase()}</span>
-              </td>
-              <td>
-                <div class="mono" style="font-size:11.5px;"><strong>${cs.records}</strong> records</div>
-                <small class="subtle">Window: ${cs.exposure_window}</small><br>
-                <small style="color:#d97706; font-weight:600;">${cs.fines}</small>
-              </td>
-              <td style="font-size:11.5px; line-height:1.5; color:#334155;">${cs.root_cause}</td>
-              <td style="font-size:11.5px; line-height:1.5; color:#1e3a8a; background:#f8fafc;">${cs.lessons_learned}</td>
+              <th style="width:12%;">Case ID</th>
+              <th style="width:22%;">Organization & Incident</th>
+              <th style="width:18%;">Impact & Fines</th>
+              <th style="width:24%;">Technical Root Cause</th>
+              <th style="width:24%;">Actionable Lesson</th>
             </tr>
-          `).join('')}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${(sum.case_studies_summaries || []).map(cs => `
+              <tr>
+                <td class="mono" style="font-size:11px;"><strong>${cs.breach_id}</strong></td>
+                <td>
+                  <strong>${cs.title}</strong><br>
+                  <small class="subtle mono">${cs.date}</small>
+                  <span class="badge ${getBadgeClass(cs.severity)}" style="margin-left:4px; font-size:8px;">${cs.severity.toUpperCase()}</span>
+                </td>
+                <td>
+                  <div class="mono" style="font-size:11px;"><strong>${cs.records}</strong> records</div>
+                  <small class="subtle">Window: ${cs.exposure_window}</small><br>
+                  <small style="color:#d97706; font-weight:600;">${cs.fines}</small>
+                </td>
+                <td style="font-size:11px; line-height:1.45; color:#334155;">${cs.root_cause}</td>
+                <td style="font-size:11px; line-height:1.45; color:#1e3a8a; background:#f8fafc;">${cs.lessons_learned}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- 6. NIST CSF 2.0 Mapping Matrix -->
     <section class="report-section">
       <h3 class="report-section-title">6. NIST Cybersecurity Framework (CSF 2.0) Strategic Control Matrix</h3>
-      <table class="report-table">
-        <thead>
-          <tr><th style="width:130px;">NIST Function</th><th style="width:250px;">Control Category</th><th>Systemic Vulnerability & Mitigation Requirement</th></tr>
-        </thead>
-        <tbody>
-          ${(sum.nist_csf_mapping || []).map(m => `
+      <div class="report-table-wrapper">
+        <table class="report-table">
+          <thead>
             <tr>
-              <td><span class="badge ${m.function.includes('GOVERN') || m.function.includes('PROTECT') || m.function.includes('IDENTIFY') ? 'critical' : 'medium'}">${m.function}</span></td>
-              <td><strong>${m.control}</strong></td>
-              <td style="line-height:1.5;">${m.finding}</td>
+              <th style="width:18%;">NIST Function</th>
+              <th style="width:26%;">Control Category</th>
+              <th style="width:56%;">Systemic Vulnerability & Mitigation Requirement</th>
             </tr>
-          `).join('')}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${(sum.nist_csf_mapping || []).map(m => `
+              <tr>
+                <td><span class="badge ${m.function.includes('GOVERN') || m.function.includes('PROTECT') || m.function.includes('IDENTIFY') ? 'critical' : 'medium'}">${m.function}</span></td>
+                <td><strong>${m.control}</strong></td>
+                <td style="line-height:1.45; font-size:11.5px;">${m.finding}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- 7. Strategic CISO Action Plan -->
@@ -579,7 +607,7 @@ function renderAllDataSummaryReport(sum) {
       <h3 class="report-section-title">7. Strategic CISO Directives & Systemic Defense Roadmap</h3>
       <div style="display:grid; gap:8px; margin-top:10px;">
         ${(sum.strategic_recommendations || []).map(r => `
-          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px 14px; border-radius:var(--radius); font-size:12.5px; color:#1e293b; line-height:1.6;">
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:10px 14px; border-radius:var(--radius); font-size:12px; color:#1e293b; line-height:1.55;">
             ${r}
           </div>
         `).join('')}
@@ -591,10 +619,10 @@ function renderAllDataSummaryReport(sum) {
       <h3 class="report-section-title">8. Verified Regulatory Sources & Citations</h3>
       <div class="report-sources-list">
         ${(sum.sources_and_citations || []).map(s => `
-          <div style="font-size:11.5px; margin-bottom:6px;">
+          <div style="font-size:11px; margin-bottom:8px; line-height:1.45;">
             <strong>${s.authority_or_publisher} (${s.publication_year}):</strong> 
             <a href="${s.url}" target="_blank" rel="noopener noreferrer">${s.title}</a>
-            ${s.citation_note ? `<br><span class="subtle">${s.citation_note}</span>` : ''}
+            ${s.citation_note ? `<br><span class="subtle" style="font-size:10.5px;">${s.citation_note}</span>` : ''}
           </div>
         `).join('')}
       </div>

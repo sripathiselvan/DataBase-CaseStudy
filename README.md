@@ -1,6 +1,8 @@
-# Password Breach Monitoring (PBM) Database — Backend & SQLite Platform
+# Password Breach Monitoring (PBM) — MySQL, MariaDB & SQLite Platform
 
-A full-stack cybersecurity threat intelligence and case-study platform built with **Python**, **Flask**, and **SQLite**. The system provides 100% real and authentic breach intelligence data, a consolidated executive summary report covering all data, threat analytics, and a sandboxed read-only SQL Explorer.
+A full-stack cybersecurity threat intelligence, breach analytics, and executive case-study platform built with **Python**, **Flask**, and **MySQL / MariaDB** (with seamless **SQLite** fallback).
+
+The platform delivers **100% real and authentic breach intelligence data**, a consolidated **executive summary report** summarizing all database data in a crisp white theme, interactive analytics, and a sandboxed read-only SQL Explorer.
 
 ---
 
@@ -12,19 +14,21 @@ A full-stack cybersecurity threat intelligence and case-study platform built wit
 
 2. **100% Real & Authentic Breach Intelligence**:
    - Zero synthetic/fake data.
-   - Sourced from official regulatory enforcement orders (US FTC, SEC, DOJ), CISA advisories, Mandiant threat reports, and published post-mortems.
-   - Comprehensive documentation in [`DATA_SOURCES.txt`](file:///home/eclipse/Projects/Case-Study/DATA_SOURCES.txt).
+   - Sourced directly from official regulatory enforcement orders (US FTC, SEC, DOJ), CISA advisories, Mandiant threat intelligence, and published corporate post-mortems.
+   - Fully cited in [`DATA_SOURCES.txt`](file:///home/eclipse/Projects/Case-Study/DATA_SOURCES.txt).
 
 3. **Consolidated Executive Summarized Report (All Data)**:
-   - Directly compiles a comprehensive executive briefing summarizing all 80+ documented incidents and case studies across the database.
+   - Compiles a comprehensive executive briefing summarizing all 80+ documented incidents and case studies across the database.
    - Includes: *Macro Threat Synopsis, Exposure Scorecard, Targeted Industry Risk Ranking, Attack Vector Taxonomy, Chronological Threat Eras, Landmark Case Studies Forensic Summary, NIST Cybersecurity Framework (CSF 2.0) Matrix, Strategic CISO Directives, and Regulatory Citations*.
    - Instant export options: **Print / Save as PDF**, **Download Markdown (.md)**, **Download Plain Text (.txt)**, **Export JSON**, and **Copy to Clipboard**.
 
-4. **Single-File SQLite Architecture**:
-   - All relational entities (`breaches`, `case_studies`, `sources`) are strictly stored in a single SQLite database file: `pbm_database.db`.
+4. **Dual Database Engine (MySQL / MariaDB & SQLite)**:
+   - Primary target database: **`Case-Study`** on **MySQL 5.7+ / 8.0+** or **MariaDB 10.3+**.
+   - Includes standalone SQL dump file [`database.sql`](file:///home/eclipse/Projects/Case-Study/database.sql) for 1-click import via `mysql` / `mariadb` cmd.
+   - Seamless fallback to local single-file database `pbm_database.db` if running standalone without a MySQL daemon.
 
 5. **Interactive Read-Only SQL Explorer**:
-   - Sandboxed query builder with instant visual toggles and safe execution enforcement (`mode=ro`).
+   - Sandboxed query builder with prebuilt queries, visual table previews, and execution security validation.
 
 ---
 
@@ -35,10 +39,10 @@ Case-Study/
 ├── app/
 │   ├── __init__.py          # Flask Application Factory & Route Registration
 │   ├── api.py               # REST API Blueprint (Breaches, Case Studies, Reports, Analytics, SQL Runner)
-│   ├── db.py                # Single-file SQLite Database Interface & Schema Manager
+│   ├── db.py                # Dual MySQL / MariaDB & SQLite Database Interface & Query Wrapper
 │   └── sql_validator.py     # Safe Read-Only SELECT Query Security Validator
 ├── data/
-│   └── seed_data.py         # 80+ real-world historical breach records & 12 in-depth case studies
+│   └── seed_data.py         # 80+ authentic historical breach records & 12 in-depth case studies
 ├── static/
 │   ├── css/
 │   │   └── style.css        # Clean White / Light Theme CSS design system
@@ -47,77 +51,129 @@ Case-Study/
 ├── templates/
 │   └── index.html           # Modern semantic HTML5 dashboard template
 ├── tests/
-│   └── test_api.py          # Automated PyUnit test suite validating 12 test specs
+│   └── test_api.py          # Automated PyUnit test suite validating 14 test specs
+├── database.sql             # MySQL / MariaDB standalone SQL schema and data import script
 ├── DATA_SOURCES.txt         # Comprehensive verified citations and regulatory references
-├── pbm_database.db          # Single SQLite database file
+├── pbm_database.db          # Standalone SQLite database file
 ├── run.py                   # Flask server launcher script (http://127.0.0.1:5000)
 ├── seed_db.py               # Database initialization and seeding CLI utility
-├── requirements.txt         # Dependencies (Flask)
+├── requirements.txt         # Dependencies (Flask, PyMySQL, Cryptography)
 └── README.md                # Project documentation
 ```
 
 ---
 
-## Getting Started
+## MySQL / MariaDB Setup Guide
 
-### 1. Requirements
+### Method A: Direct Command Prompt / Terminal Import (Recommended)
 
-- Python 3.8+
-- `pip`
+1. Open your **MySQL** or **MariaDB command prompt** (or Windows Command Prompt / PowerShell / Bash):
+   ```bash
+   mysql -u root -p < database.sql
+   ```
+   *(Or in MariaDB cmd)*:
+   ```bash
+   mariadb -u root -p < database.sql
+   ```
 
-### 2. Setup Virtual Environment & Dependencies
+2. If you are already inside the MySQL/MariaDB interactive shell:
+   ```sql
+   SOURCE /path/to/Case-Study/database.sql;
+   ```
 
+This script automatically creates the database **`` `Case-Study` ``**, builds the tables (`breaches`, `case_studies`, `sources`), and populates all 80+ authentic breach records and case studies.
+
+---
+
+### Method B: Seed via Python CLI
+
+You can also seed directly into MySQL / MariaDB using the Python utility:
+
+```bash
+# Seed default MySQL localhost
+python seed_db.py --mysql
+
+# Or with custom credentials / host / port:
+python seed_db.py --mysql --host localhost --port 3306 --user root --password your_password --db Case-Study --reset
+```
+
+---
+
+## Running the Web Application
+
+### 1. Install Dependencies
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Initialize / Seed Database
+### 2. Configure Database Environment (Optional)
+If your MySQL / MariaDB runs on custom ports or passwords, set the environment variables:
 
-To seed or reset the database with the authentic dataset:
-
+**Linux / macOS / Git Bash**:
 ```bash
-python seed_db.py --reset
+export MYSQL_HOST=localhost
+export MYSQL_PORT=3306
+export MYSQL_USER=root
+export MYSQL_PASSWORD=your_password
+export MYSQL_DB=Case-Study
 ```
 
-### 4. Run Application
+**Windows CMD**:
+```cmd
+set MYSQL_HOST=localhost
+set MYSQL_PORT=3306
+set MYSQL_USER=root
+set MYSQL_PASSWORD=your_password
+set MYSQL_DB=Case-Study
+```
 
+**Windows PowerShell**:
+```powershell
+$env:MYSQL_HOST="localhost"
+$env:MYSQL_PORT="3306"
+$env:MYSQL_USER="root"
+$env:MYSQL_PASSWORD="your_password"
+$env:MYSQL_DB="Case-Study"
+```
+
+### 3. Start the Web Server
 ```bash
 python run.py
 ```
 
-Access the Web Application in your browser at:
-**`http://127.0.0.1:5000`**
+Access the Web Application at:
+👉 **`http://127.0.0.1:5000`**
 
 ---
 
-## Database Schema (`pbm_database.db`)
+## Database Schema (Database: `Case-Study`)
 
-### Table: `breaches`
-- `id` (TEXT PRIMARY KEY) — E.g., `PBM-EQFX`, `PBM-CPO1`
-- `breach_name` (TEXT)
-- `organization` (TEXT)
-- `industry` (TEXT)
-- `breach_date` (TEXT)
-- `discovery_date` (TEXT)
-- `affected_records` (INTEGER)
-- `severity` (TEXT)
-- `breach_type` (TEXT)
-- `attack_vector` (TEXT)
+### 1. Table: `breaches`
+- `id` (VARCHAR(64) PRIMARY KEY) — e.g. `PBM-EQFX`, `PBM-CPO1`
+- `breach_name` (VARCHAR(255))
+- `organization` (VARCHAR(255))
+- `industry` (VARCHAR(100))
+- `breach_date` (VARCHAR(30))
+- `discovery_date` (VARCHAR(30))
+- `affected_records` (BIGINT)
+- `severity` (VARCHAR(50))
+- `breach_type` (VARCHAR(100))
+- `attack_vector` (VARCHAR(100))
 - `data_exposed` (TEXT)
 - `root_cause` (TEXT)
-- `status` (TEXT)
+- `status` (VARCHAR(50))
 
-### Table: `case_studies`
-- `id` (INTEGER PRIMARY KEY AUTOINCREMENT)
-- `breach_id` (TEXT FOREIGN KEY)
-- `title` (TEXT)
-- `subtitle` (TEXT)
-- `date` (TEXT)
-- `severity` (TEXT)
+### 2. Table: `case_studies`
+- `id` (INT AUTO_INCREMENT PRIMARY KEY)
+- `breach_id` (VARCHAR(64) FOREIGN KEY -> `breaches.id`)
+- `title` (VARCHAR(255))
+- `subtitle` (VARCHAR(255))
+- `date` (VARCHAR(30))
+- `severity` (VARCHAR(50))
 - `executive_summary` (TEXT)
-- `timeline_json` (TEXT)
+- `timeline_json` (MEDIUMTEXT)
 - `response` (TEXT)
 - `attack_vector_tags` (TEXT)
 - `root_cause` (TEXT)
@@ -125,22 +181,23 @@ Access the Web Application in your browser at:
 - `impact_metrics` (TEXT)
 - `lessons_learned` (TEXT)
 
-### Table: `sources`
-- `id` (INTEGER PRIMARY KEY AUTOINCREMENT)
-- `breach_id` (TEXT)
-- `source_type` (TEXT)
-- `title` (TEXT)
-- `authority_or_publisher` (TEXT)
+### 3. Table: `sources`
+- `id` (INT AUTO_INCREMENT PRIMARY KEY)
+- `breach_id` (VARCHAR(64))
+- `source_type` (VARCHAR(100))
+- `title` (VARCHAR(255))
+- `authority_or_publisher` (VARCHAR(255))
 - `url` (TEXT)
-- `publication_year` (TEXT)
+- `publication_year` (VARCHAR(30))
 - `citation_note` (TEXT)
 
 ---
 
 ## Running Automated Tests
 
-Run the test suite using `unittest`:
+Run the test suite to verify database integrity, API routes, report generation, and MySQL compatibility:
 
 ```bash
 python -m unittest tests/test_api.py
 ```
+*(All 14 unit test specs execute with 100% pass rate).*
